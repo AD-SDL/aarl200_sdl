@@ -1,4 +1,4 @@
-name: Transfer_Into_BK
+name: Transfer_To_ICP
 metadata:
   author: Tobias Ginsburg, Kyle Hippe, Ryan D. Lewis
   info: Example workflow for WEI
@@ -14,8 +14,8 @@ flowdef:
     action: movej
     args:
       joints: ur_aarl200.travel_safe_joints
-      a: 0.35
-      v: 0.35
+      acceleration: 0.35
+      velocity: 0.35
   - name: Move Rail to Pick Position
     module: vention_rail_aarl200
     action: move
@@ -35,7 +35,7 @@ flowdef:
     module : ur_aarl200
     action : gripper_pick
     args : 
-      home : payload.arm_safe_joints
+      home : ur_aarl200.supply_station_safe_joints
       source : payload.arm_position
       source_approach_axis : null
       source_approach_distance : .15
@@ -44,28 +44,14 @@ flowdef:
     module: ur_aarl200
     action: movej
     args:
-      joints: ur_aarl200.travel_safe_joints
-      a: 0.35
-      v: 0.35
-  - name: Move Rail to Safe Approach Position
-    module: vention_rail_aarl200
-    action: move
-    args:
-      position: 50
-      speed: 30
-      acceleration: 10
-  - name: Move Arm to Safe Approach Position
-    module: ur_aarl200
-    action: movej
-    args:
-      joints: ur_aarl200.big_kahuna_safe_joints
-      a: 0.35
-      v: 0.35
+      joints: ur_aarl200.travel_container_joints
+      acceleration: 0.35
+      velocity: 0.35
   - name: Move Rail to Place Position
     module: vention_rail_aarl200
     action: move
     args:
-      position: 0
+      position: 150
       speed: 30
       acceleration: 10
   - name: Set UR Params
@@ -80,55 +66,15 @@ flowdef:
     module : ur_aarl200
     action : gripper_place
     args : 
-      home : ur_aarl200.big_kahuna_safe_joints
-      target : ur_aarl200.big_kahuna_supply_rack_icp
+      home :  ur_aarl200.icp_safe_joints
+      target : ur_aarl200.icp
       target_approach_axis : null
       target_approach_distance : .15
       gripper_open : null
-  - name: Move Rail to Safe Approach Position
-    module: vention_rail_aarl200
-    action: move
-    args:
-      position: 50
-      speed: 30
-      acceleration: 10
   - name: Home UR
     module: ur_aarl200
     action: movej
     args:
       joints: ur_aarl200.travel_safe_joints
-      a: 0.35
-      v: 0.35
-  - name: Close Gripper
-    module: ur_aarl200
-    action: toggle_gripper
-    args:
-      close: true
-  - name: Move to door open home position
-    module: ur_aarl200
-    action: movej
-    args:
-      joints: ur_aarl200.door_open_safe_joints
-      v: 0.35
-      a: 0.35
-  - name: Move to door closing position
-    module: ur_aarl200
-    action: movel
-    args:
-      location: ur_aarl200.door_open_outside
       acceleration: 0.35
       velocity: 0.35
-  - name: Close Door
-    module: ur_aarl200
-    action: movel
-    args:
-      location: ur_aarl200.door_closed_inside
-      velocity: 0.1
-      acceleration: 0.1
-  - name: Home UR
-    module: ur_aarl200
-    action: movej
-    args:
-      joints: ur_aarl200.travel_safe_joints
-      a: 0.35
-      v: 0.35

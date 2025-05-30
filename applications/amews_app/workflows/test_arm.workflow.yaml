@@ -1,0 +1,61 @@
+name: Test Arm Movements
+
+metadata:
+  author: Tobias Ginsburg, Kyle Hippe, Ryan D. Lewis
+  info: Workflow to open big kahuna door
+  version: 0.2
+  
+parameters:
+  - "name": location
+steps:
+  - name: Home UR
+    node: ur_aarl200
+    action: movej
+    args:
+      acceleration: 0.35
+      velocity: 0.35
+    locations:
+      joints: arm_safe_up
+  - name: Position rail
+    node: vention_rail_aarl200
+    action: move
+    args:
+      speed: 30
+      acceleration: 30
+    locations:
+      position: $location
+  - name: Pick up tube rack
+    node: ur_aarl200
+    action: gripper_pick
+    args:
+      gripper_close: 100
+    locations: 
+      home: supply_station_safe
+      source: $location
+  - name: Move to Safe
+    node: ur_aarl200
+    action: movej
+    locations:
+       joints: arm_safe_up
+  - name: Slow down movement
+    node: ur_aarl200
+    action: set_movement_params
+    args:
+      acceleration: 0.2
+      velocity: 0.2
+  - name: Place In Supply Station
+    node: ur_aarl200
+    action: gripper_place
+    args:
+      target_approach_distance: 0.12
+    locations:
+      home: supply_station_safe
+      target: $location
+  - name: Home UR
+    node: ur_aarl200
+    action: movej
+    args:
+      acceleration: 0.35
+      velocity: 0.35
+    locations:
+      joints: arm_safe_up

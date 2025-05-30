@@ -1,0 +1,61 @@
+name: Transer_out_of_bk
+
+metadata:
+  author: Tobias Ginsburg, Kyle Hippe, Ryan D. Lewis
+  info: Workflow to transfer out of big kahuna
+  version: 0.2
+  
+parameters:
+  - "name": target_location
+steps:
+  - name: Home UR
+    node: ur_aarl200
+    action: movej
+    args:
+      acceleration: 0.35
+      velocity: 0.35
+    locations:
+      joints: arm_safe_up
+  - name: Position rail
+    node: vention_rail_aarl200
+    action: move
+    args:
+      speed: 30
+      acceleration: 30
+    locations:
+      position: big_kahuna_rail
+  - name: Pick up tube rack
+    node: ur_aarl200
+    action: gripper_pick
+    locations: 
+      home: big_kahuna_safe
+      source: big_kahuna_tube_rack
+  - name: Move to Safe
+    node: ur_aarl200
+    action: movej
+    locations:
+       joints: arm_safe_up
+  - name: Move rail
+    node: vention_rail_aarl200
+    action: move
+    args:
+      speed: 30
+      acceleration: 30
+    locations:
+      position: $target_location
+  - name: Place In Supply Station
+    node: ur_aarl200
+    action: gripper_place
+    args:
+      target_approach_distance: 0.12
+    locations:
+      home: supply_station_safe
+      target: $target_location
+  - name: Home UR
+    node: ur_aarl200
+    action: movej
+    args:
+      acceleration: 0.35
+      velocity: 0.35
+    locations:
+      joints: arm_safe_up

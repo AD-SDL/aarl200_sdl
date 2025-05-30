@@ -1,0 +1,10 @@
+name: OpenLS test
+metadata:
+  author: Tobias Ginsburg, Kyle Hippe, Ryan D. Lewis
+  info: Example workflow for WEI
+  version: 0.2
+
+steps:
+  - name: LS blank
+    node: bk_aarl200
+    action: blank

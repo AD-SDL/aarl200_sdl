@@ -1,0 +1,61 @@
+name: Transfer_out_of_icp
+
+metadata:
+  author: Tobias Ginsburg, Kyle Hippe, Ryan D. Lewis
+  info: Workflow to transfer from icp
+  version: 0.2
+  
+parameters:
+  - "name": target_location
+steps:
+  - name: Home UR
+    node: ur_aarl200
+    action: movej
+    args:
+      acceleration: 0.35
+      velocity: 0.35
+    locations:
+      joints: arm_safe_up
+  - name: Position rail
+    node: vention_rail_aarl200
+    action: move
+    args:
+      speed: 30
+      acceleration: 30
+    locations:
+      position: icp_safe
+  - name: Pick up tube rack
+    node: ur_aarl200
+    action: gripper_pick
+    locations: 
+      home: icp_safe
+      source: icp_tube_rack
+  - name: Move to Safe
+    node: ur_aarl200
+    action: movej
+    locations:
+       joints: arm_safe_up
+  - name: Move rail
+    node: vention_rail_aarl200
+    action: move
+    args:
+      speed: 30
+      acceleration: 30
+    locations:
+      position: $target_location
+  - name: Place In Supply Slot
+    node: ur_aarl200
+    action: gripper_place
+    args:
+      target_approach_distance: 0.12
+    locations:
+      home: supply_station_safe
+      target: $target_location
+  - name: Home UR
+    node: ur_aarl200
+    action: movej
+    args:
+      acceleration: 0.35
+      velocity: 0.35
+    locations:
+      joints: arm_safe_up

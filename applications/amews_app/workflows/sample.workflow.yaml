@@ -1,0 +1,15 @@
+name: Sample Workflow
+metadata:
+  author: Tobias Ginsburg, Kyle Hippe, Ryan D. Lewis
+  info: Example workflow for WEI
+  version: 0.2
+
+parameters:
+  - "name": info
+steps:
+  - name: LS sample
+    node: bk_aarl200
+    action: sample
+    args:
+      info: $info
+      lap: 0

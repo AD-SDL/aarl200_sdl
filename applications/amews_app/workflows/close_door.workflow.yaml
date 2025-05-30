@@ -1,89 +1,61 @@
 name: Close_Door
+
 metadata:
   author: Tobias Ginsburg, Kyle Hippe, Ryan D. Lewis
-  info: Example workflow for WEI
+  info: Workflow to open big kahuna door
   version: 0.2
 
-# modules:
-#   - name: sleeper
-#   - name: webcam
-
-flowdef:
+steps:
   - name: Home UR
-    module: ur_aarl200
+    node: ur_aarl200
     action: movej
     args:
-      joints: ur_aarl200.travel_safe_joints
-      a: 0.35
-      v: 0.35
-  # - name: Move Rail to Zero
-  #   module: vention_rail_aarl200
-  #   action: move
-  #   args:
-  #     position: 0
-  #     speed: 20
-  #     acceleration: 10
-  # - name: Home Rail
-  #   module: vention_rail_aarl200
-  #   action: home
-  - name: Back out Rail
-    module: vention_rail_aarl200
+      acceleration: 0.35
+      velocity: 0.35
+    locations:
+      joints: arm_safe_up
+  - name: Position Rail
+    node: vention_rail_aarl200
     action: move
     args:
-      position: 50
       speed: 10
       acceleration: 10
+    locations:
+      position: big_kahuna_rail
   - name: Close Gripper
-    module: ur_aarl200
+    node: ur_aarl200
     action: toggle_gripper
     args:
       close: true
-  - name: Move to door open home position
-    module: ur_aarl200
+  - name: Move to door opening position
+    node: ur_aarl200
     action: movej
     args:
-      joints: ur_aarl200.door_open_safe_joints
-      v: 0.35
-      a: 0.35
-  - name: Move to door closing position
-    module: ur_aarl200
-    action: movel
-    args:
-      location: ur_aarl200.door_open_outside
       acceleration: 0.35
       velocity: 0.35
-  - name: Close Door
-    module: ur_aarl200
-    action: movel
-    args:
-      location: ur_aarl200.door_closed_inside
-      velocity: 0.1
-      acceleration: 0.1
-  - name: Home UR
-    module: ur_aarl200
+    locations: 
+      joints: big_kahuna_door_open_outside_approach
+  - name: Move to door opening position
+    node: ur_aarl200
     action: movej
     args:
-      joints: ur_aarl200.travel_safe_joints
-      a: 0.35
-      v: 0.35
-  # - name: Set UR Params
-  #   module: ur_aarl200
-  #   action: set_movement_params
-  #   args:
-  #     velocity: 0.1
-  #     acceleration: 0.2
-  #     gripper_speed: 50
-  #     gripper_force: 150
-  # - name : Test Gripper Transfer
-  #   module : ur_aarl200
-  #   action : gripper_transfer
-  #   args : 
-  #     home : ur_aarl200.home_position
-  #     source : ur_aarl200.supply_rack_icp1
-  #     target : ur_aarl200.supply_rack_icp1
-  #     source_approach_axis : null
-  #     target_approach_axis : null
-  #     source_approach_distance : .15
-  #     target_approach_distance : .15
-  #     gripper_open : null
-  #     gripper_close : null
+      acceleration: 0.35
+      velocity: 0.35
+    locations: 
+      joints: big_kahuna_door_open_outside
+  - name: Open Door
+    node: ur_aarl200
+    action: movel
+    args: 
+      velocity: 0.05
+      acceleration: 0.05
+    locations:
+       target: big_kahuna_door_closed_inside
+  - name: Home UR
+    node: ur_aarl200
+    action: movej
+    args:
+      acceleration: 0.35
+      velocity: 0.35
+    locations:
+      joints: arm_safe_up

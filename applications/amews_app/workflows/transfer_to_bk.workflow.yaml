@@ -1,0 +1,59 @@
+name: Transfer_into_bk
+
+metadata:
+  author: Tobias Ginsburg, Kyle Hippe, Ryan D. Lewis
+  info: Workflow to open big kahuna door
+  version: 0.2
+  
+parameters:
+  - "name": source_location
+steps:
+  - name: Home UR
+    node: ur_aarl200
+    action: movej
+    args:
+      acceleration: 0.35
+      velocity: 0.35
+    locations:
+      joints: arm_safe_up
+  - name: Position rail
+    node: vention_rail_aarl200
+    action: move
+    args:
+      speed: 30
+      acceleration: 30
+    locations:
+      position: $source_location
+  - name: Pick up tube rack
+    node: ur_aarl200
+    action: gripper_pick
+    locations: 
+      home: supply_station_safe
+      source: $source_location
+  - name: Move to Safe
+    node: ur_aarl200
+    action: movej
+    locations:
+       joints: arm_safe_up
+  - name: Move rail
+    node: vention_rail_aarl200
+    action: move
+    args:
+      speed: 30
+      acceleration: 30
+    locations:
+      position: big_kahuna_rail
+  - name: Place In Big Kahuna
+    node: ur_aarl200
+    action: gripper_place
+    locations:
+      home: big_kahuna_safe
+      target: big_kahuna_tube_rack
+  - name: Home UR
+    node: ur_aarl200
+    action: movej
+    args:
+      acceleration: 0.35
+      velocity: 0.35
+    locations:
+      joints: arm_safe_up

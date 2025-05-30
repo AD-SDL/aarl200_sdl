@@ -2,21 +2,31 @@
 name: Run_ICP
 metadata:
   author: Tobias Ginsburg, Kyle Hippe, Ryan D. Lewis
-  info: Example workflow for WEI
+  info: Runs the ICP workflow
   version: 0.2
-flowdef:
-  - name : start_auto_analysis_on_container
-    module : icp
-    action : start_auto_analysis_on_container
+
+parameters:
+  - "name": sample_info_file
+  - "name": dataset_name
+
+steps:
+  - name : start_analysis
+    node : icp_aarl200
+    action : plasma_on
+
+  - name : start_analysis
+    node : icp_aarl200
+    action : start_analysis
     args : 
-      method_name : "Food Dye v2"
-      container : payload.container
-      dataset_name : "test"
+      method_name : "Mina_hts_v02"
+      dataset_name : $dataset_name
       export_template_name : "MeansTemplate"
       wavelength_realign : 0
       precalibrate : false
       use_active_method : false
       wait_for_completion : true
+    files:
+      sample_info_file : $sample_info_file
     checks : null 
-    comment: a comment! 
+    
     

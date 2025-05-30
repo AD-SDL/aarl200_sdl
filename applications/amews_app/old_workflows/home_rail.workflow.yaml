@@ -10,8 +10,8 @@ flowdef:
     action: movej
     args:
       joints: ur_aarl200.travel_safe_joints
-      a: 0.35
-      v: 0.35
+      acceleration: 0.35
+      velocity: 0.35
   - name: Move Rail to Zero
     module: vention_rail_aarl200
     action: move
