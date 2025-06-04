@@ -27,6 +27,7 @@ config:
   get_action_result_retries: 3
 nodes:
   bk_aarl200: http://CSI0365887.cse.anl.gov:2000
+  icp_aarl200: http://146.139.45.9:2000
   ur_aarl200: http://controlroom1.cse.anl.gov:3011
   vention_rail_aarl200: http://controlroom1.cse.anl.gov:3022
 locations:
@@ -48,7 +49,7 @@ locations:
     - -0.8787341874888916
     - 0.34816962480545044
     - -0.0683067480670374
-    vention_rail_aarl200: 175
+    vention_rail_aarl200: 176
   resource_definition:
     resource_name: supply_slot_1
     resource_name_prefix: null
@@ -193,12 +194,12 @@ locations:
   description: tube rack slot for the big kahuna
   lookup:
     ur_aarl200:
-    - -0.2694500128375452
-    - -0.3366847795299073
-    - 0.9717524687396448
-    - -0.6236542028239747
-    - 1.3202370405197144
-    - -0.00309926668276006
+    - -0.2743142286883753
+    - -0.3106702131083985
+    - 0.9703729788409632
+    - -0.7046889823726197
+    - 1.2903695106506348
+    - -0.003465000783101857
     vention_rail_aarl200: 50
   resource_definition:
     resource_name: big_kahuna_tube_rack
@@ -301,12 +302,12 @@ locations:
   description: The position to on the inside of the door handle when the door is closed
   lookup:
     ur_aarl200:
-    - -0.5275762716876429
-    - -1.4630941090038796
-    - 1.9372885862933558
-    - -0.40171177804980474
-    - 1.1580631732940674
-    - -0.027250591908590138
+    - -0.5409544149981897
+    - -1.4619277280620118
+    - 1.9357288519488733
+    - -0.40081150949511724
+    - 1.144716501235962
+    - -0.028331581746236623
   resource_definition: null
   resource_id: null
 - location_name: supply_station_safe

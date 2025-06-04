@@ -2,7 +2,7 @@ import math
 import string
 from utils.big_kahuna_protocol_types import BigKahunaDelay, BigKahunaProtocol, BigKahunaDispense, BigKahunaPlate, BigKahunaChemical, BigKahunaParameter, BigKahunaStir, BigKahunaTransfer
 from utils.AMEWS_types import AMEWS_tube
-def generate_protocol(first_run: bool, num_cell_plates: int = 6, input_chemicals = [], cell_volumes = [], starting_cell_plate = 0, starting_cell_well = 0): 
+def generate_protocol(first_run: bool, num_cells: int = 24, input_chemicals = [], cell_volumes = [], starting_cell=0, total_samples=1, current_samples=0, aliquots = [25]): 
     """
     Generates a protocol for the AMEWS application.
 
@@ -12,6 +12,7 @@ def generate_protocol(first_run: bool, num_cell_plates: int = 6, input_chemicals
     Returns:
         None
     """
+    num_cell_plates = math.ceil(num_cells / 4)
     tube_rack_info = {}
     full_tube_volume = 2500
     sample_volume = 250
@@ -31,12 +32,11 @@ def generate_protocol(first_run: bool, num_cell_plates: int = 6, input_chemicals
             "Deck 14-15 Heat-Stir 2",
             "Deck 14-15 Heat-Stir 3",
         ]
-    output_wells = ["A1", "A2", "B1", "B2"]
-    input_wells = ["C1", "C2", "D1", "D2"]
-    aliquots = [25]
+    input_wells = ["A1", "A2", "B1", "B2"]
+    output_wells = ["C1", "C2", "D1", "D2"]
     tube_rack_wells = []
-    for i in range(0, 6):
-        for j in range(1, 16):
+    for i in range(0, 1):
+        for j in range(1, 6):
             tube_rack_wells.append(string.ascii_uppercase[i] + str(j))
 
     protocol = BigKahunaProtocol(
@@ -56,9 +56,6 @@ def generate_protocol(first_run: bool, num_cell_plates: int = 6, input_chemicals
                                      BigKahunaChemical(name="standard")
                                  ]
                                  )
-    protocol.actions.append(
-         BigKahunaStir(target_plate="ICP_rack", rate=500)
-    )
     for i in range(num_cell_plates):
         plate_name = f"cell_plate_{i+1}"
         protocol.plates[plate_name] = BigKahunaPlate(name=plate_name, type="Rack 4x2 Mina H-cell", rows=4, columns=2, deck_position=cell_plate_locations[i])
@@ -76,30 +73,29 @@ def generate_protocol(first_run: bool, num_cell_plates: int = 6, input_chemicals
     if first_run:
         for i in range(len(input_chemicals)):
             row = 1 if i < 3 else 2
-            column = i + 1 if i < 3 else i - 2
+            column = i + 1 if i < 4 else i-3
             protocol.chemicals.append(
                 BigKahunaChemical(name=input_chemicals[i], source_plate="source_plate", deck_position="Deck 10-11 Position 2", row=row, column=column, volume=10000)
             )
         protocol.plates["source_plate"] =  BigKahunaPlate(name="source_plate", type="Rack 2x4 20mL Vial", rows=2, columns=4, deck_position="Deck 10-11 Position 2", source=True)
         
         """Blank Samples"""
-        for i in range(0, num_cell_plates):
-            for j in range(len(output_wells)):
-                    target_well = tube_rack_wells[well_index]
-                    cell_plate = f"cell_plate_{i+1}"
-                    source_well = output_wells[j]
+        for i in range(0, num_cells):
+                cell_plate = f"cell_plate_{math.floor(i / 4)+1}"
+                source_well = output_wells[i % 4]
+                target_well = tube_rack_wells[well_index]
                     # protocol.actions.append(
                     #     BigKahunaDispense(source_chemical=input_chemicals[j], target_plate="ICP_rack", target_well=target_well, volume=full_tube_volume-sample_volume, tags=["Chaser", "Backsolvent"])
                     # )
-                    protocol.actions.append(
-                        BigKahunaTransfer(source_plate=cell_plate, target_plate="ICP_rack", source_well=source_well, target_well=target_well, volume=sample_volume, tags=["SyringePump","SingleTip"])
+                protocol.actions.append(
+                BigKahunaTransfer(source_plate=cell_plate, target_plate="ICP_rack", source_well=source_well, target_well=target_well, volume=sample_volume, tags=["SyringePump","SingleTip"])
                     )
                     # protocol.actions.append(
                     #     BigKahunaDispense(source_chemical="solvent", target_plate=cell_plate, target_well=source_well, volume=sample_volume, tags=["SyringePump","SingleTip", "Backsolvent"])
                     # )
-                    tube_rack_info[target_well] = AMEWS_tube(well=target_well, type="Blank", sampled_plate=cell_plate, sampled_well=source_well)
-                    well_index += 1
-        """Fill"""
+                tube_rack_info[target_well] = AMEWS_tube(well=target_well, type="Blank", sampled_plate=cell_plate, sampled_well=source_well)
+                well_index += 1
+        """Fill Reagents"""
         for i in range(len(cell_volumes)):
             plate = f"cell_plate_{math.floor(i / 4)+1}"
             well = input_wells[i % 4]
@@ -108,13 +104,12 @@ def generate_protocol(first_run: bool, num_cell_plates: int = 6, input_chemicals
                     BigKahunaDispense(source_chemical=chemical, target_plate=plate, target_well=well, volume=volume, tags=["SyringePump","SingleTip"])
                 )
         """Calibrate"""
-        for i in range(num_cell_plates):
-            for j in range(len(input_wells)):
-                for aliquot in aliquots:
+        for i in range(0, num_cells):
+               for aliquot in aliquots:
                     target_well = tube_rack_wells[well_index]
-                    source_well = input_wells[j]
-                    cell_plate = f"cell_plate_{i+1}"
-                    # protocol.actions.append(
+                    source_well = input_wells[i % 4]
+                    plate = f"cell_plate_{math.floor(i / 4)+1}"
+                    #protocol.actions.append(
                     #     BigKahunaDispense(source_chemical="solvent", target_plate="ICP_rack", target_well=target_well, volume=full_tube_volume-aliquot, tags=["Chaser", "Backsolvent"])
                     # )
                     protocol.actions.append(
@@ -125,14 +120,13 @@ def generate_protocol(first_run: bool, num_cell_plates: int = 6, input_chemicals
                     # )
                     tube_rack_info[target_well] = AMEWS_tube(well=target_well, type="Calibrate", sampled_plate=cell_plate, sampled_well=source_well)
                     well_index += 1
-    while well_index < 12: #len(tube_rack_wells):
-        for i in range(starting_cell_plate, num_cell_plates):
-            for j in range(starting_cell_well, len(output_wells)):
-                if well_index >= len(tube_rack_wells):
+    while well_index < len(tube_rack_wells) and current_samples < total_samples:
+        for i in range(starting_cell, num_cells):
+                if well_index >= len(tube_rack_wells) or current_samples >= total_samples:
                     break
                 target_well = tube_rack_wells[well_index]
-                source_well = output_wells[j]
-                cell_plate = f"cell_plate_{i+1}"
+                source_well = output_wells[i % 4]
+                cell_plate = f"cell_plate_{math.floor(i / 4)+1}"
                 # protocol.actions.append(
                 #     BigKahunaDispense(source_chemical="solvent", target_plate="ICP_rack", target_well=target_well, volume=full_tube_volume-sample_volume, tags=["Chaser", "Backsolvent"])
                 # )
@@ -144,15 +138,17 @@ def generate_protocol(first_run: bool, num_cell_plates: int = 6, input_chemicals
                 # )
                 
                 tube_rack_info[target_well] = AMEWS_tube(well=target_well, type="Sample", sampled_plate=cell_plate, sampled_well=source_well)
-                last_cell_well = j
-                last_cell_plate = i
+                next_cell = i + 1
                 well_index += 1
-            starting_cell_well = 0
-        starting_cell_plate = 0
-        # protocol.actions.append(
-        #             BigKahunaDelay(target_plate=cell_plate, delay=sampling_delay)
-        #         )
-    return protocol, tube_rack_info, last_cell_plate, last_cell_well
+                current_samples += 1
+        if well_index < len(tube_rack_wells) and current_samples < total_samples:
+          protocol.actions.append(
+                    BigKahunaDelay(target_plate=cell_plate, delay=sampling_delay)
+                )
+          next_cell = 0
+        starting_cell = 0
+        
+    return protocol, tube_rack_info, next_cell, current_samples
 
 
 

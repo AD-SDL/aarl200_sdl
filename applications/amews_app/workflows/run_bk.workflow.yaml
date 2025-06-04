@@ -1,4 +1,4 @@
-name: OpenLS test
+name: Run a protocl on the bk
 metadata:
   author: Tobias Ginsburg, Kyle Hippe, Ryan D. Lewis
   info: Example workflow for WEI
@@ -22,7 +22,7 @@ steps:
   #   action: run_protocol
   #   args:
   #     protocol: $calibrate_protocol
-  - name: LS sample
+  - name: Run Protocol
     node: bk_aarl200
     action: run_protocol
     files:

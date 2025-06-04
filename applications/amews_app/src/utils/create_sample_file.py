@@ -20,7 +20,6 @@ def well_to_icp_location(well: str) -> int:
 def create_sample_file(
     tube_rack_info: dict[str, AMEWS_tube],
     tube_rack_number: int,
-    experiment_id: str,
     output_path: str,
     method: str = "Mina_HTS",
     file_name: str = "sample_info.sifx",
@@ -41,7 +40,7 @@ def create_sample_file(
 
     output_file = Path(output_path) / file_name
 
-    n = 2*calibrate + len(tube_rack_info) + int(post_rinse) + 1
+    n = 2*calibrate + len(tube_rack_info.keys()) + int(post_rinse) + 1
 
     with open(output_file, "w") as file:
         file.write("[System Description]\n")
@@ -52,10 +51,10 @@ def create_sample_file(
         file.write("VolumeUnits=Vol,mL,0.001,,\n")
         file.write("WeightUnits=Wt,g,1.00,,\n")
         file.write("[User Defined List]\n")
-        file.write("NumberOfUserDefined=3\n")
+        file.write("NumberOfUserDefined=2\n")
         file.write("UserDefined1=kind\n")
         file.write("UserDefined2=method\n")
-        file.write("UserDefined3=sampled_time\n")
+        file.write("UserDefined3=\n")
         file.write("UserDefined4=\n")
         file.write("UserDefined5=\n")
         file.write("[Variable Parameter List]\n")
@@ -71,31 +70,31 @@ def create_sample_file(
         sample_counter=1 # item counter
 
         # important: sample wetting, home
-        file.write("Data%d=1,0,rinse,rinse,%s\n" % (sample_counter+1, method))
+        file.write("Data%d=1,0,rinse,rinse,%s\n" % (sample_counter, method))
         sample_counter+=1
         if calibrate:
-            file.write("Data%d=2,1,precalibrate,calibrate,%s\n" % (sample_counter+1, method)) # well 1
+            file.write("Data%d=2,1,qualitycontrol,qc,%s\n" % (sample_counter, method)) # well 1
             sample_counter+=1
 
         for well, tube_info in tube_rack_info.items():
-                    label = experiment_id + "_tube_rack_" + str(tube_rack_number) + "_" + tube_info.type.value + "_well_" + well 
-                    file.write("Data%d=%d,%d,%s,sample,%s,%s\n" % (sample_counter+1, 
-                                                                sample_counter+1, 
+                    label = "rack" + str(tube_rack_number) + "well" + well 
+                    file.write("Data%d=%d,%d,%s,sample,%s\n" % (sample_counter, 
+                                                                sample_counter, 
                                                                 well_to_icp_location(well), 
                                                                 label, 
                                                                 method,
-                                                                tube_info.sampled_at.strftime("%Y-%m-%d %H:%M:%S")))
+                                                               ))
                     
                     sample_counter+=1
 
 
         if calibrate:
-            file.write("Data%d=%d,1,postcalibrate,calibrate,%s,\n" % (sample_counter+1, sample_counter+1, method)) # well 1
+            file.write("Data%d=%d,1,qualitycontrol,qc,%s\n" % (sample_counter, sample_counter, method)) # well 1
             sample_counter+=1
 
         if post_rinse: # optional extra rinse at the end of a sequence, home
             
-                file.write("Data%d=%d,0,rinse,rinse,%s\n" % (sample_counter+1, sample_counter+1, method))
+                file.write("Data%d=%d,0,rinse,rinse,%s\n" % (sample_counter, sample_counter, method))
                 sample_counter+=1
 
         file.close()

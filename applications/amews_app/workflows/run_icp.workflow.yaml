@@ -10,23 +10,29 @@ parameters:
   - "name": dataset_name
 
 steps:
-  - name : start_analysis
-    node : icp_aarl200
-    action : plasma_on
+  # - name : start_plasma
+  #   node : icp_aarl200
+  #   action : plasma_on
+  #   args :
+  #     stabilization_delay: 0
 
-  - name : start_analysis
+  - name : Run Analysis
     node : icp_aarl200
-    action : start_analysis
+    action : run_analysis
     args : 
       method_name : "Mina_hts_v02"
       dataset_name : $dataset_name
-      export_template_name : "MeansTemplate"
+      export_template_name : "MeansTemplate.xptx"
       wavelength_realign : 0
-      precalibrate : false
+      precalibrate : true
       use_active_method : false
       wait_for_completion : true
     files:
       sample_info_file : $sample_info_file
     checks : null 
-    
+  # - name : stop_plasma
+  #   node : icp_aarl200
+  #   action : plasma_off
+  #   args :
+  #     stabilization_delay: 0
     

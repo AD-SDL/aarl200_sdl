@@ -46,6 +46,8 @@ steps:
   - name: Place In Big Kahuna
     node: ur_aarl200
     action: gripper_place
+    args:
+      target_approach_distance: 0.1
     locations:
       home: big_kahuna_safe
       target: big_kahuna_tube_rack
