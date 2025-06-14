@@ -22,6 +22,11 @@ steps:
       acceleration: 10
     locations:
       position: big_kahuna_rail
+  - name: Set Params
+    node: ur_aarl200
+    action: set_movement_params
+    args:
+      gripper_force: 50
   - name: Close Gripper
     node: ur_aarl200
     action: toggle_gripper
@@ -59,3 +64,13 @@ steps:
       velocity: 0.35
     locations:
       joints: arm_safe_up
+  - name: toggle_gripper
+    node: ur_aarl200
+    action: toggle_gripper
+    args:
+      open: true
+  - name: Set Params
+    node: ur_aarl200
+    action: set_movement_params
+    args:
+      gripper_force: 200

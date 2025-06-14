@@ -10,11 +10,11 @@ parameters:
   - "name": dataset_name
 
 steps:
-  # - name : start_plasma
-  #   node : icp_aarl200
-  #   action : plasma_on
-  #   args :
-  #     stabilization_delay: 0
+  - name : start_plasma
+    node : icp_aarl200
+    action : plasma_on
+    args :
+      stabilization_delay: 300
 
   - name : Run Analysis
     node : icp_aarl200
@@ -24,15 +24,14 @@ steps:
       dataset_name : $dataset_name
       export_template_name : "MeansTemplate.xptx"
       wavelength_realign : 0
-      precalibrate : true
+      precalibrate : false
       use_active_method : false
       wait_for_completion : true
     files:
       sample_info_file : $sample_info_file
     checks : null 
-  # - name : stop_plasma
-  #   node : icp_aarl200
-  #   action : plasma_off
-  #   args :
-  #     stabilization_delay: 0
+
+  - name : Stop Plasma
+    node : icp_aarl200
+    action : plasma_off
     

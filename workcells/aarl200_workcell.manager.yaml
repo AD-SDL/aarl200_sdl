@@ -194,12 +194,12 @@ locations:
   description: tube rack slot for the big kahuna
   lookup:
     ur_aarl200:
-    - -0.2743142286883753
-    - -0.3106702131083985
-    - 0.9703729788409632
-    - -0.7046889823726197
-    - 1.2903695106506348
-    - -0.003465000783101857
+    - -0.2765467802630823
+    - -0.3107280296138306
+    - 0.9703653494464319
+    - -0.7046964925578614
+    - 1.288142204284668
+    - -0.0033677260028284195
     vention_rail_aarl200: 50
   resource_definition:
     resource_name: big_kahuna_tube_rack
@@ -363,4 +363,30 @@ locations:
     default_child_quantity: null
     resource_type: ''
   resource_id: 01JTKJCA99H4H2Q92YZH6NBVBF
+- location_name: nmr_slot_1
+  location_id: 01JXE569NSEGESFSN9MS7B9XKG
+  description: tube rack slot for the icp
+  lookup:
+    ur_aarl200:
+    - 1.1596189737319946
+    - -0.7475418013385315
+    - 1.3638470808612269
+    - -0.5678845208934327
+    - 1.1658238172531128
+    - -0.014802281056539357
+    vention_rail_aarl200: 211
+  resource_definition:
+    resource_name: nmr_slot_1
+    resource_name_prefix: null
+    resource_class: ''
+    base_type: slot
+    resource_description: null
+    owner: {}
+    custom_attributes: null
+    capacity: 1
+    default_children: null
+    default_child_template: null
+    default_child_quantity: null
+    resource_type: ''
+  resource_id: 01JXE569VHSFA4MW42TS7MGWAJ
 workcell_directory: /home/madsci/.madsci/workcells/AARL200 Workcell
