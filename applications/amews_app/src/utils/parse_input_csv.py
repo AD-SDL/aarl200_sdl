@@ -7,7 +7,7 @@ def parse_input_csv(path: str):
     for row in data.iterrows():
         cell = {}
         for i in range(len(input_chemicals)):
-            if row[1][i] != 0:
+            if row[1][i] != 0 and not pd.isna(row[1][i]):
                 cell[input_chemicals[i]] =  int(row[1][i])
         cells.append(cell)
     return input_chemicals, cells
