@@ -1,6 +1,7 @@
 import datetime
 import json
 import math
+import shutil
 from madsci.common.types.workflow_types import WorkflowDefinition
 from madsci.common.types.step_types import StepDefinition
 from madsci.client.experiment_application import ExperimentApplication, ExperimentDesign
@@ -16,9 +17,9 @@ class AMEWSApp(ExperimentApplication):
     """A demonstration and benchmarking experimental application: mixing colors autonomously."""
     url = "http://controlroom1.cse.anl.gov:8002/"
     workflow_directory = Path("../workflows").resolve()
-    experiment_design = ExperimentDesign(experiment_name="AMEWS First Test")
-    output_path = Path("/home/aarl/Documents/AMEWS_output")
-
+    experiment_design = ExperimentDesign(experiment_name="AMEWS Cell Tests")
+    network_output_path = Path("/run/user/1000/gvfs/smb-share:server=sheldon.cse.anl.gov,share=aarl200/RESULTS/AMEWS_Output").resolve()
+    output_path = Path("/home/aarl/Documents/AMEWS_output").resolve()
     
 
 if __name__ == "__main__":
@@ -29,10 +30,13 @@ if __name__ == "__main__":
         run_description=f"Run for AMEWS experiment, started at ~{current_time}",
     ):
         experiment_app.output_path = experiment_app.output_path / experiment_app.experiment.experiment_id
+        experiment_app.network_output_path = experiment_app.network_output_path / experiment_app.experiment.experiment_id
         experiment_app.output_path.mkdir(parents=True, exist_ok=True)
         (experiment_app.output_path / "protocols").mkdir(parents=True, exist_ok=True)
         (experiment_app.output_path / "results").mkdir(parents=True, exist_ok=True)
-        
+        experiment_app.network_output_path.mkdir(parents=True, exist_ok=True)
+        (experiment_app.network_output_path / "protocols").mkdir(parents=True, exist_ok=True)
+        (experiment_app.network_output_path / "results").mkdir(parents=True, exist_ok=True)
         "Input Variables"
         num_cells = 24
         sampling_rounds = 6
@@ -42,7 +46,10 @@ if __name__ == "__main__":
         
         
         json.dump(input_volumes, open(experiment_app.output_path / "input_volumes.json", "w"), indent=4)
-       
+        try:
+            json.dump(input_volumes, open(experiment_app.network_output_path / "input_volumes.json", "w"), indent=4)
+        except Exception as e:
+             print("unable to write to network")
         total_samples = num_cells*sampling_rounds 
         aliquots = [25]
         num_tubes = 90
@@ -81,7 +88,11 @@ if __name__ == "__main__":
 
                 with open(experiment_app.output_path / f"tube_rack_{len(sampled_racks)}_info.json", "w") as f:
                     json.dump({key: value.model_dump() for key, value in sampled_racks[-1].items()}, f, indent=4)
-
+                try:
+                    with open(experiment_app.network_output_path / f"tube_rack_{len(sampled_racks)}_info.json", "w") as f:
+                        json.dump({key: value.model_dump() for key, value in sampled_racks[-1].items()}, f, indent=4)
+                except Exception as e:
+                    print("unable to write to network")
                 bk_workflow = None
             
         
@@ -100,6 +111,12 @@ if __name__ == "__main__":
                 protocol_path = experiment_app.output_path / "protocols" / f"tube_rack_{len(sampled_racks) + 1}.json"
                 with open(protocol_path, "w") as f:
                     json.dump(protocol.model_dump(), f)
+                try:
+                     network_protocol_path = experiment_app.network_output_path / "protocols" / f"tube_rack_{len(sampled_racks) + 1}.json"
+                     with open(network_protocol_path, "w") as f:
+                        json.dump(protocol.model_dump(), f)
+                except Exception as e:
+                    print("unable to write protocol to network")
                 first_run = False
                 experiment_app.workcell_client.submit_workflow(experiment_app.workflow_directory / "open_door.workflow.yaml")
                 experiment_app.workcell_client.submit_workflow(
@@ -130,5 +147,10 @@ if __name__ == "__main__":
                     measured_racks.append(sampled_racks[len(measured_racks)])
                     experiment_app.data_client.save_datapoint_value(
                         icp_workflow.get_datapoint_id_by_label("result_file"), experiment_app.output_path / "results" / f"tube_rack_{len(measured_racks)}_results.csv")
+                    try:
+                        experiment_app.data_client.save_datapoint_value(
+                            icp_workflow.get_datapoint_id_by_label("result_file"), experiment_app.network_output_path / "results" / f"tube_rack_{len(measured_racks)}_results.csv")
+                    except Exception as e:
+                        print("unable to write results to network")
                     icp_workflow = None
                     

@@ -161,7 +161,7 @@ def generate_protocol(first_run: bool, num_cells: int = 24, input_chemicals = []
                 next_cell = i + 1
                 well_index += 1
                 current_samples += 1
-        if well_index <= len(tube_rack_wells) and current_samples < total_samples:
+        if well_index <= len(tube_rack_wells) and current_samples < total_samples and total_samples > 90:
           protocol.actions.append(
                     BigKahunaDelay(target_plate=cell_plate, delay=sampling_delay)
                 )

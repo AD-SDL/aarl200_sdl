@@ -4,10 +4,11 @@ def parse_input_csv(path: str):
        data = pd.read_csv(file, sep=",", header=0)
     input_chemicals = data.columns.to_list()
     cells = []
+    data = data.fillna(0)
     for row in data.iterrows():
         cell = {}
         for i in range(len(input_chemicals)):
-            if row[1][i] != 0 and not pd.isna(row[1][i]):
+            if row[1][i] != 0:
                 cell[input_chemicals[i]] =  int(row[1][i])
         cells.append(cell)
     return input_chemicals, cells
