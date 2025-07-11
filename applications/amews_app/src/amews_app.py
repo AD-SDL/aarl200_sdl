@@ -12,6 +12,7 @@ from utils.create_sample_file import create_sample_file
 from utils.AMEWS_types import AMEWS_tube
 from utils.big_kahuna_protocol_types import BigKahunaProtocol
 from utils.parse_input_csv import parse_input_csv
+from data_processing.icp_processing import convert_report
 
 class AMEWSApp(ExperimentApplication):
     """A demonstration and benchmarking experimental application: mixing colors autonomously."""
@@ -19,6 +20,7 @@ class AMEWSApp(ExperimentApplication):
     workflow_directory = Path("../workflows").resolve()
     experiment_design = ExperimentDesign(experiment_name="AMEWS Cell Tests")
     network_output_path = Path("/run/user/1000/gvfs/smb-share:server=sheldon.cse.anl.gov,share=aarl200/RESULTS/AMEWS_Output").resolve()
+    network_input_path = Path("/run/user/1000/gvfs/smb-share:server=sheldon.cse.anl.gov,share=aarl200/INPUTS").resolve()
     output_path = Path("/home/aarl/Documents/AMEWS_output").resolve()
     
 
@@ -41,12 +43,28 @@ if __name__ == "__main__":
         num_cells = 24
         sampling_rounds = 6
         sampling_delay_mins = 180
-        csv_path = "/home/aarl/Downloads/Amews_input_test.csv"
+        input_variables_path = experiment_app.network_input_path / "input_variables.json"
+        with open(input_variables_path, "r") as f:
+            input_variables = json.load(f)
+        num_cells = input_variables.get("num_cells", num_cells)
+        sampling_rounds = input_variables.get("sampling_rounds", sampling_rounds)
+        sampling_delay_mins = input_variables.get("sampling_delay_mins", sampling_delay_mins)
+        csv_path = experiment_app.network_input_path / "AMEWS_Input.csv"
+        with open(csv_path, "r") as f:
+            with open(experiment_app.output_path / "AMEWS_Input.csv", "w") as out_f:
+                out_f.write(f.read())
+        try:
+            with open(csv_path, "r") as f:
+                with open(experiment_app.network_output_path / "AMEWS_Input.csv", "w") as out_f:
+                    out_f.write(f.read())
+        except Exception as e: 
+                print("unable to write input csv to network")
         input_chemicals, input_volumes = parse_input_csv(csv_path)
         
-        
+        json.dump(input_variables, open(experiment_app.output_path / "input_variables.json", "w"), indent=4)
         json.dump(input_volumes, open(experiment_app.output_path / "input_volumes.json", "w"), indent=4)
         try:
+            json.dump(input_variables, open(experiment_app.network_output_path / "input_variables.json", "w"), indent=4)
             json.dump(input_volumes, open(experiment_app.network_output_path / "input_volumes.json", "w"), indent=4)
         except Exception as e:
              print("unable to write to network")
@@ -65,7 +83,6 @@ if __name__ == "__main__":
         first_run = True
         
         input_locations = ["supply_slot_1", "supply_slot_2", "supply_slot_3", "supply_slot_4", "supply_slot_5"]
-        
         while len(measured_racks) < total_racks:
             bk_workflow = experiment_app.workcell_client.query_workflow(bk_workflow.workflow_id) if bk_workflow else None
             icp_workflow = experiment_app.workcell_client.query_workflow(icp_workflow.workflow_id) if icp_workflow else None
@@ -147,9 +164,12 @@ if __name__ == "__main__":
                     measured_racks.append(sampled_racks[len(measured_racks)])
                     experiment_app.data_client.save_datapoint_value(
                         icp_workflow.get_datapoint_id_by_label("result_file"), experiment_app.output_path / "results" / f"tube_rack_{len(measured_racks)}_results.csv")
+                    
                     try:
+                        convert_report(str(experiment_app.output_path / "results" / f"tube_rack_{len(measured_racks)}_results.csv"))
                         experiment_app.data_client.save_datapoint_value(
                             icp_workflow.get_datapoint_id_by_label("result_file"), experiment_app.network_output_path / "results" / f"tube_rack_{len(measured_racks)}_results.csv")
+                        convert_report(str(experiment_app.network_output_path / "results" / f"tube_rack_{len(measured_racks)}_results.csv"))
                     except Exception as e:
                         print("unable to write results to network")
                     icp_workflow = None

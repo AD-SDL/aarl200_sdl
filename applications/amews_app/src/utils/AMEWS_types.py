@@ -31,4 +31,15 @@ class AMEWS_tube(BaseModel):
     sampled_well: str
 
     """The time when the sample was taken."""
+
+    sample_volume: float
+
+    """The volume of the sample in the tube, in microliters."""
+
+    total_volume: float
+
+    """The total volume of the tube, in microliters."""
+
+    
     sampled_at: datetime.datetime | None = None
+    """The time when the sample was taken, if applicable."""
