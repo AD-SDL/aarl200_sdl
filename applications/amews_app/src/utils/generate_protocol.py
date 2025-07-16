@@ -15,7 +15,8 @@ def generate_protocol(first_run: bool, num_cells: int = 24, input_chemicals = []
     num_cell_plates = math.ceil(num_cells / 4)
     tube_rack_info = {}
     reagent_fill_volume = 2000
-    total_cell_volume = 17000
+    total_fill_cell_volume = 21000
+    total_sample_cell_volume = 33000
     full_tube_volume = 2500
     sample_volume = 250
     fill_delay = 10
@@ -100,25 +101,35 @@ def generate_protocol(first_run: bool, num_cells: int = 24, input_chemicals = []
                 )
                 tube_rack_info[target_well] = AMEWS_tube(well=target_well, type="Blank", sampled_plate=cell_plate, sampled_well=source_well, sample_volume=sample_volume, total_volume=full_tube_volume)
                 well_index += 1
+        """Fill Solvent"""
+        for i in range(len(cell_volumes)):
+            plate = f"cell_plate_{math.floor(i / 4)+1}"
+            input_well = input_wells[i % 4]
+            output_well = output_wells[i % 4]
+            total_reagent_fill_volume = len(cell_volumes[i])*reagent_fill_volume
+            protocol.actions.append(
+                    BigKahunaDispense(source_chemical="solvent", target_plate=plate, target_well=input_well, volume=total_fill_cell_volume-total_reagent_fill_volume, tags=["SyringePump","ExtSingleTip", "Backsolvent"])
+                )
+    
+            protocol.actions.append(
+                    BigKahunaDispense(source_chemical="solvent", target_plate=plate, target_well=output_well, volume=total_sample_cell_volume-total_reagent_fill_volume, tags=["SyringePump","ExtSingleTip", "Backsolvent"])
+                )
+
         """Fill Reagents"""
         for i in range(len(cell_volumes)):
             plate = f"cell_plate_{math.floor(i / 4)+1}"
-            well = input_wells[i % 4]
+            input_well = input_wells[i % 4]
             output_well = output_wells[i % 4]
             filled_volume = 0
             total_fill_volume = len(cell_volumes[i])*reagent_fill_volume
             for chemical, volume in cell_volumes[i].items():
                 protocol.actions.append(
-                    BigKahunaDispense(source_chemical="solvent", target_plate=plate, target_well=well, volume=reagent_fill_volume-volume, tags=["Chaser", "Backsolvent"])
+                    BigKahunaDispense(source_chemical="solvent", target_plate=plate, target_well=input_well, volume=reagent_fill_volume-volume, tags=["Chaser", "Backsolvent"])
                 )
                 protocol.actions.append(
-                    BigKahunaDispense(source_chemical=chemical, target_plate=plate, target_well=well, volume=volume, tags=["SyringePump","SingleTip"])
+                    BigKahunaDispense(source_chemical=chemical, target_plate=plate, target_well=input_well, volume=volume, tags=["SyringePump","SingleTip"])
                 )
                 filled_volume += reagent_fill_volume
-            if filled_volume < total_fill_volume:
-                protocol.actions.append(
-                    BigKahunaDispense(source_chemical="solvent", target_plate=plate, target_well=well, volume=total_fill_volume-filled_volume, tags=["SyringePump","SingleTip", "Backsolvent"])
-                )
             protocol.actions.append(
                     BigKahunaDispense(source_chemical="solvent", target_plate=plate, target_well=output_well, volume=total_fill_volume, tags=["SyringePump","SingleTip", "Backsolvent"])
                 )

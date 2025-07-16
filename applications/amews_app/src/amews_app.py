@@ -5,6 +5,7 @@ import shutil
 from madsci.common.types.workflow_types import WorkflowDefinition
 from madsci.common.types.step_types import StepDefinition
 from madsci.client.experiment_application import ExperimentApplication, ExperimentDesign
+from madsci.client.node.rest_node_client import RestNodeClient
 from pathlib import Path
 from utils.generate_protocol import generate_protocol
 from utils.assign_timestamps import assign_timestamps
@@ -12,6 +13,7 @@ from utils.create_sample_file import create_sample_file
 from utils.AMEWS_types import AMEWS_tube
 from utils.big_kahuna_protocol_types import BigKahunaProtocol
 from utils.parse_input_csv import parse_input_csv
+from data_processing.current_data_processing import run_analysis
 from data_processing.icp_processing import convert_report
 
 class AMEWSApp(ExperimentApplication):
@@ -44,6 +46,8 @@ if __name__ == "__main__":
         sampling_rounds = 6
         sampling_delay_mins = 180
         input_variables_path = experiment_app.network_input_path / "input_variables.json"
+        labjack_client = RestNodeClient("http://146.139.45.9:2001")
+
         with open(input_variables_path, "r") as f:
             input_variables = json.load(f)
         num_cells = input_variables.get("num_cells", num_cells)
@@ -146,17 +150,20 @@ if __name__ == "__main__":
                     )
                 
             if icp_workflow is None and len(sampled_racks) > len(measured_racks):
-                
-                    stamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
-                    dataset_name = stamp + "_r" + str(len(measured_racks)+1)
-                    sample_info_file_path = create_sample_file(sampled_racks[len(measured_racks)], len(measured_racks) + 1,  experiment_app.output_path, "mina_hts_2", dataset_name, post_rinse=True, calibrate=True)
-                    experiment_app.workcell_client.submit_workflow(
-                        experiment_app.workflow_directory / "transfer_to_icp.workflow.yaml", parameters={"source_location": input_locations[len(measured_racks)]}
-                    )
-                    icp_workflow = experiment_app.workcell_client.submit_workflow(
-                    experiment_app.workflow_directory / "run_icp.workflow.yaml", parameters={"dataset_name": dataset_name, "sample_info_file": str(sample_info_file_path)}, await_completion=False)
+                    labjack_state = labjack_client.get_state()
+                    if labjack_state["volumes"]["AIN0"] < 0.95*113.56 and False:
+                        print("Not enough space in barrel, will not run icp yet")
+                    else:
+                        stamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+                        dataset_name = stamp + "_r" + str(len(measured_racks)+1)
+                        sample_info_file_path = create_sample_file(sampled_racks[len(measured_racks)], len(measured_racks) + 1,  experiment_app.output_path, "mina_hts_2", dataset_name, post_rinse=True, calibrate=True)
+                        experiment_app.workcell_client.submit_workflow(
+                            experiment_app.workflow_directory / "transfer_to_icp.workflow.yaml", parameters={"source_location": input_locations[len(measured_racks)]}
+                        )
+                        icp_workflow = experiment_app.workcell_client.submit_workflow(
+                        experiment_app.workflow_directory / "run_icp.workflow.yaml", parameters={"dataset_name": dataset_name, "sample_info_file": str(sample_info_file_path)}, await_completion=False)
 
-                
+                    
             if icp_workflow and icp_workflow.status.completed:
                     experiment_app.workcell_client.submit_workflow(
                             experiment_app.workflow_directory / "transfer_from_icp.workflow.yaml", parameters={"target_location": input_locations[len(measured_racks)]}
@@ -170,7 +177,10 @@ if __name__ == "__main__":
                         experiment_app.data_client.save_datapoint_value(
                             icp_workflow.get_datapoint_id_by_label("result_file"), experiment_app.network_output_path / "results" / f"tube_rack_{len(measured_racks)}_results.csv")
                         convert_report(str(experiment_app.network_output_path / "results" / f"tube_rack_{len(measured_racks)}_results.csv"))
+                        run_analysis(experiment_app.network_output_path, len(sampled_racks),  num_cells)
+                    
                     except Exception as e:
+                        print(e)
                         print("unable to write results to network")
                     icp_workflow = None
                     
