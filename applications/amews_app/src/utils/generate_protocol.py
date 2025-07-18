@@ -35,8 +35,8 @@ def generate_protocol(first_run: bool, num_cells: int = 24, input_chemicals = []
             "Deck 14-15 Heat-Stir 2",
             "Deck 14-15 Heat-Stir 3"
         ]
-    input_wells = ["A1", "A2", "B1", "B2"]
-    output_wells = ["C1", "C2", "D1", "D2"]
+    output_wells = ["A1", "A2", "B1", "B2"]
+    input_wells = ["C1", "C2", "D1", "D2"]
     tube_rack_wells = []
     for i in range(0, 6):
         for j in range(1, 16):
