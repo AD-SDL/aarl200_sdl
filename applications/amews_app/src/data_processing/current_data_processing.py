@@ -20,8 +20,8 @@ def calculate_concentration(element: str, volume: float, num_ions: int):
     return final_ppm
 def run_analysis(path: Path, num_tube_racks: int, num_cells: int):
     cell_plates = math.ceil(num_cells / 4)
-    input_wells = ["A1", "A2", "B1", "B2"]
-    output_wells = ["C1", "C2", "D1", "D2"] 
+    output_wells = ["A1", "A2", "B1", "B2"]
+    input_wells = ["C1", "C2", "D1", "D2"] 
     barcodes = ["76", "70", "68"]
     tube_racks = []
    
