@@ -1,0 +1,35 @@
+name: Run a protocl on the bk
+metadata:
+  author: Tobias Ginsburg, Kyle Hippe, Ryan D. Lewis
+  info: Example workflow for WEI
+  version: 0.2
+
+parameters:
+  - "name": blank_protocol
+  - "name": fill_protocol
+  - "name": calibrate_protocol
+  - "name": sample_protocol
+steps:
+  - name: LS blank
+    node: bk_aarl200
+    action: run_preloaded_library
+    args:
+      library_id: $blank_protocol
+    files:
+      chemfile: "fill_chem_file."
+      promptsfile:
+  - name: LS fill
+    node: bk_aarl200
+    action: run_protocol
+    args:
+      protocol: $fill_protocol
+  - name: LS calibrate
+    node: bk_aarl200
+    action: run_protocol
+    args:
+      protocol: $calibrate_protocol
+  - name: Run Protocol
+    node: bk_aarl200
+    action: run_protocol
+    files:
+      "protocol" : $protocol

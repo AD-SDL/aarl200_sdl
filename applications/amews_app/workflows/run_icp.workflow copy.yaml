@@ -1,0 +1,37 @@
+
+name: Run_ICP
+metadata:
+  author: Tobias Ginsburg, Kyle Hippe, Ryan D. Lewis
+  info: Runs the ICP workflow
+  version: 0.2
+
+parameters:
+  - "name": sample_info_file
+  - "name": dataset_name
+
+steps:
+  - name : start_plasma
+    node : icp_aarl200
+    action : plasma_on
+    args :
+      stabilization_delay: 300
+
+  - name : Run Analysis
+    node : icp_aarl200
+    action : run_analysis
+    args : 
+      method_name : "Mina_hts_v02"
+      dataset_name : $dataset_name
+      export_template_name : "MeansTemplate.xptx"
+      wavelength_realign : 0
+      precalibrate : false
+      use_active_method : false
+      wait_for_completion : true
+    files:
+      sample_info_file : $sample_info_file
+    checks : null 
+
+  - name : Stop Plasma
+    node : icp_aarl200
+    action : plasma_off
+    

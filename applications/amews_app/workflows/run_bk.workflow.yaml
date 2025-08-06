@@ -7,21 +7,6 @@ metadata:
 parameters:
   - "name": protocol
 steps:
-  # - name: LS blank
-  #   node: bk_aarl200
-  #   action: run_protocol
-  #   args:
-  #     protocol: $blank_protocol
-  # - name: LS fill
-  #   node: bk_aarl200
-  #   action: run_protocol
-  #   args:
-  #     protocol: $fill_protocol
-  # - name: LS calibrate
-  #   node: bk_aarl200
-  #   action: run_protocol
-  #   args:
-  #     protocol: $calibrate_protocol
   - name: Run Protocol
     node: bk_aarl200
     action: run_protocol
