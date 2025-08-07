@@ -4,7 +4,6 @@ import random
 def write_sampleinfo(
         autosampler: dict,
         batch: str,
-        size: int = 90,  # if zero use container information, last tube to sample
         start: int = 0,  # start offset
         items: int = 0,  # number of items in the rack
         description: str = "Sample information file",
@@ -13,9 +12,6 @@ def write_sampleinfo(
         method: str = "mina_hts_2",
     ):
         
-        if size == 0:
-            size = items
-        size = min(size, items)
     
 
         r = "rack%d.sifx" % items
@@ -60,17 +56,15 @@ def write_sampleinfo(
                     "CalStart=2,1,calibrate,%s,%s\n" % ("calbirate",  method)
                 )  # well 1
                 m += 1
-            autosampler_list = list(autosampler.items())
-            random.shuffle(autosampler_list)
-            for i, label in autosampler_list:
-                if j >= start and j < size:
-                    
-                    file.write(
-                        "Data%d=%d,%d,%s,%s\n"
-                        % (d + 1, m + 1, i + 10, label, method)
-                    )
-                    m += 1
-                    d += 1
+            for i, label in autosampler:
+                if j >= start and j < items:
+                    if "missing" not in label.lower():
+                        file.write(
+                            "Data%d=%d,%d,%s,%s\n"
+                            % (d + 1, m + 1, i + 10, label, method)
+                        )
+                        m += 1
+                        d += 1
                 j += 1
 
             if calibrate:
