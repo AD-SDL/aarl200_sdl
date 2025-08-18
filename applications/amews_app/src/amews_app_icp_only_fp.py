@@ -40,7 +40,8 @@ if __name__ == "__main__":
         run_name=f"AMEWS Experiment Run {current_time}",
         run_description=f"Run for AMEWS experiment, started at ~{current_time}",
     ):
-        folder_name = "tests BK_run24 July-August 2025/BK_run24_20250723_074837 8-cell run"
+        #folder_name = "tests BK_run24 July-August 2025/BK_run24_20250723_074837 8-cell run"
+        folder_name = "BK_run24_20250807_142310"
         experiment_app.output_path = experiment_app.output_path / folder_name
         experiment_app.network_output_path = experiment_app.network_output_path / folder_name
         experiment_app.output_path.mkdir(parents=True, exist_ok=True)
@@ -54,6 +55,19 @@ if __name__ == "__main__":
         print(os.listdir(input_folder))
         labjack_client = RestNodeClient("http://146.139.45.9:2001")
         measured_racks = []
+        with open(input_folder / "Active_6QW03.json", 'r') as f:
+             container = json.load(f)
+        autosampler, items, code, last_dataset = unpack_self_container(container)
+        sample_info_file_path = write_sampleinfo( 
+            autosampler = autosampler,
+            batch=code,
+            items=items,
+            description="Sample information file for Mina HTS 2",
+            calibrate=True,
+            rinse=True,
+            method="mina_hts_3",
+        )
+        raise("crap")
         with open(input_folder / "AS_sequence_log.csv", 'r') as f:
              sequence_log = pd.read_csv(f)
         container_labels = []
@@ -62,12 +76,11 @@ if __name__ == "__main__":
                 container_labels.append(row["container"])
         sampled_racks = []
         for label in container_labels:
-            rack = json.load((input_folder / ("Active_"+label + "_edited.json")).open())
+            rack = json.load((input_folder / ("Active_"+label + ".json")).open())
             sampled_racks.append(rack)
         total_racks = len(sampled_racks)
         input_locations = ["supply_slot_1", "supply_slot_2", "supply_slot_3", "supply_slot_4", "supply_slot_5"]
         icp_workflow = None
-        W
         
         while len(measured_racks) < total_racks:
             icp_workflow = experiment_app.workcell_client.query_workflow(icp_workflow.workflow_id) if icp_workflow else None

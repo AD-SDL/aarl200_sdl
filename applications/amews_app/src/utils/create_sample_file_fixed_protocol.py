@@ -49,13 +49,15 @@ def write_sampleinfo(
             queue = []
 
             # important: sample wetting, home
-            file.write("ValveWet=1,0,rinse,%s,%s\n" % ("rinse", method))
+            file.write("Data%d=1,0,rinse,%s,%s\n" % (d+1, "rinse", method)),
+            d +=1
 
             if calibrate:
                 file.write(
-                    "CalStart=2,1,calibrate,%s,%s\n" % ("calbirate",  method)
+                    "Data%d=2,1,calibrate,%s,%s\n" % (d+1, "calbirate",  method)
                 )  # well 1
                 m += 1
+                d += 1
             for i, label in autosampler:
                 if j >= start and j < items:
                     if "missing" not in label.lower():
@@ -69,19 +71,21 @@ def write_sampleinfo(
 
             if calibrate:
                 file.write(
-                    "CalEnd=%d,1,calibrate,%s,%s,\n"
-                    % (m + 1, "calibrate", method)
+                    "Data%d=%d,1,calibrate,%s,%s,\n"
+                    % (d +1, m + 1, "calibrate", method)
                 )  # well 1
                 m += 1
+                d += 1
 
             if rinse:  # optional extra rinse at the end of a sequence, home
                 for i in range(rinse):
                     queue.append("rinse")
                     file.write(
-                        "Rinse%d=%d,0,rinse,%s,%s\n"
-                        % (i + 1, m + 1, "rinse", method)
+                        "Data%d=%d,0,rinse,%s,%s\n"
+                        % (d + 1, m + 1, "rinse", method)
                     )
                     m += 1
+                    d += 1
 
             file.close()
             return filepath

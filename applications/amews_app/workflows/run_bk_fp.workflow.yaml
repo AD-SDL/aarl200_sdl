@@ -1,0 +1,25 @@
+name: Run a protocl on the bk
+metadata:
+  author: Tobias Ginsburg, Kyle Hippe, Ryan D. Lewis
+  info: Example workflow for WEI
+  version: 0.2
+
+parameters:
+  - "name": library_id
+  - "name": chem_file
+  - "name": prompts_file
+steps:
+  - name: Read Barcode
+    node: camera_aarl200
+    action: read_barcode
+    args:
+      autofocus: false
+      focus: 100
+  - name: LS Sample
+    node: bk_aarl200
+    action: run_preloaded_library
+    args:
+      library_id: $library_id
+    files:
+      chemfile: $chem_file
+      promptsfile: $prompts_file

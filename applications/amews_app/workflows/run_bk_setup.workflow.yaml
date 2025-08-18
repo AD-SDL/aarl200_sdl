@@ -7,29 +7,60 @@ metadata:
 parameters:
   - "name": blank_protocol
   - "name": fill_protocol
-  - "name": calibrate_protocol
   - "name": sample_protocol
+  - "name": load_protocol
+  - "name": load_chem_file
+  - "name": load_prompts_file
+  - "name": blank_chem_file
+  - "name": blank_prompts_file
+  - "name": fill_chem_file
+  - "name": fill_prompts_file
+  - "name": sample_chem_file
+  - "name": sample_prompts_file
 steps:
-  - name: LS blank
+  - name: Read Barcode
+    node: camera_aarl200
+    action: read_barcode
+    args:
+      autofocus: false
+      focus: 100
+  # - name: LS load
+  #   node: bk_aarl200
+  #   action: run_preloaded_library
+  #   args:
+  #     library_id: $load_protocol
+  #   files:
+  #     chemfile: $load_chem_file
+  #     promptsfile: $load_prompts_file
+  #   data_labels:
+  #     log_file: load_log
+  # - name: LS blank
+  #   node: bk_aarl200
+  #   action: run_preloaded_library
+  #   args:
+  #     library_id: $blank_protocol
+  #   files:
+  #     chemfile: $blank_chem_file
+  #     promptsfile: $blank_prompts_file
+  #   data_labels:
+  #     log_file: blank_log
+  # - name: LS fill
+  #   node: bk_aarl200
+  #   action: run_preloaded_library
+  #   args:
+  #     library_id: $fill_protocol
+  #   files:
+  #     chemfile: $fill_chem_file
+  #     promptsfile: $fill_prompts_file
+  #   data_labels:
+  #     log_file: fill_log
+  - name: LS Sample
     node: bk_aarl200
     action: run_preloaded_library
     args:
-      library_id: $blank_protocol
+      library_id: $sample_protocol
     files:
-      chemfile: "fill_chem_file."
-      promptsfile:
-  - name: LS fill
-    node: bk_aarl200
-    action: run_protocol
-    args:
-      protocol: $fill_protocol
-  - name: LS calibrate
-    node: bk_aarl200
-    action: run_protocol
-    args:
-      protocol: $calibrate_protocol
-  - name: Run Protocol
-    node: bk_aarl200
-    action: run_protocol
-    files:
-      "protocol" : $protocol
+      chemfile: $sample_chem_file
+      promptsfile: $sample_prompts_file
+    data_labels:
+      log_file: sample_log

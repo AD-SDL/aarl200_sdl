@@ -20,7 +20,7 @@ steps:
     node : icp_aarl200
     action : run_analysis
     args : 
-      method_name : "Mina_hts_v02"
+      method_name : "Mina_hts_v03"
       dataset_name : $dataset_name
       export_template_name : "MeansTemplate.xptx"
       wavelength_realign : 0

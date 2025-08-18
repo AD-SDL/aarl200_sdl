@@ -27,6 +27,7 @@ config:
   get_action_result_retries: 3
 nodes:
   bk_aarl200: http://CSI0365887.cse.anl.gov:2000
+  camera_aarl200: http://CSI0365887.cse.anl.gov:2001
   icp_aarl200: http://146.139.45.9:2000
   labajack_aarl200: http://146.139.45.9:2001
   ur_aarl200: http://controlroom1.cse.anl.gov:3011
