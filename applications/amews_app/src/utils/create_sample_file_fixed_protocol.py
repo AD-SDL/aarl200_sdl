@@ -54,7 +54,7 @@ def write_sampleinfo(
 
             if calibrate:
                 file.write(
-                    "Data%d=2,1,calibrate,%s,%s\n" % (d+1, "calbirate",  method)
+                    "Data%d=2,1,before,%s,%s\n" % (d+1, "calibrate",  method)
                 )  # well 1
                 m += 1
                 d += 1
@@ -71,8 +71,8 @@ def write_sampleinfo(
 
             if calibrate:
                 file.write(
-                    "Data%d=%d,1,calibrate,%s,%s,\n"
-                    % (d +1, m + 1, "calibrate", method)
+                    "Data%d=%d,1,after,%s,%s,\n"
+                    % (d +1, m + 1, "calibrate rpt", method)
                 )  # well 1
                 m += 1
                 d += 1

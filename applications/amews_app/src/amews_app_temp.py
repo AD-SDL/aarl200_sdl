@@ -48,6 +48,8 @@ class AMEWSApp(ExperimentApplication):
         return str(output_path)
 if __name__ == "__main__":
     experiment_app = AMEWSApp()
+    wf = experiment_app.workcell_client.query_workflow("01K387C071CVAN2WGZ58XKH1BE")
+    wf.get_datapoint_id_by_label("log_file")
     current_time = datetime.datetime.now()
     with experiment_app.manage_experiment(
         run_name=f"AMEWS Experiment Run {current_time}",
@@ -65,7 +67,7 @@ if __name__ == "__main__":
         first_run = True
         input_locations = ["supply_slot_1", "supply_slot_2", "supply_slot_3", "supply_slot_4", "supply_slot_5"]
         setup_parameters = {}
-        experiment_label = "Z:/RESULTS\\BK_run24_20250822_171736" 
+        experiment_label = "Z:/RESULTS\\BK_run24_20250821_145405" 
         experiment_folder = experiment_label.replace("Z:/RESULTS\\", "")
         experiment_app.network_output_path = experiment_app.network_output_path / experiment_folder
         experiment_app.output_path = experiment_app.output_path / experiment_folder
@@ -125,144 +127,148 @@ if __name__ == "__main__":
             with open(container_path, "r") as f:
                 rack = json.load(f)
                 final_racks.append(rack)
+        bk_workflow = None
         icp_workflow = None
+        icp_workflow = "/home/aarl/Downloads/result_file(1)"
         bk_step_counter = 0
+        sampled_racks.append(final_racks[1])
        
-        while len(measured_racks) < num_tube_racks:
+        while len(measured_racks) < 1:
             bk_workflow = experiment_app.workcell_client.query_workflow(bk_workflow.workflow_id) if bk_workflow else None
-            icp_workflow = experiment_app.workcell_client.query_workflow(icp_workflow.workflow_id) if icp_workflow else None
+            icp_workflow = experiment_app.workcell_client.query_workflow("01K39DSM1YJ5Q5YXSZKNV9TG9Z") if icp_workflow else None
             
-            if bk_workflow and bk_workflow.status.completed:
-                rack = final_racks[len(sampled_racks)]
-                experiment_app.workcell_client.submit_workflow(experiment_app.workflow_directory / "open_door.workflow.yaml")
-                experiment_app.workcell_client.submit_workflow(
-                experiment_app.workflow_directory / "transfer_from_bk.workflow.yaml", parameters={"target_location": input_locations[len(sampled_racks)]}
-                )
-                experiment_app.workcell_client.submit_workflow(experiment_app.workflow_directory / "close_door.workflow.yaml")
-                barcode = experiment_app.data_client.get_datapoint_value(bk_workflow.get_datapoint_id_by_label("barcode"))
-                if first_run:
-                    first_run = False
-                    for index, row in sequence_log_pd.iterrows():
-                        if row["category"] in ["load1", "fill1", "blank1", "rack1"]:
-                            sequence_log_pd.at[index, "barcode"] = str(barcode)
-                    for data_label in ["sample_log", "fill_log", "blank_log", "load_log"]:
-                        datapoint_id = bk_workflow.get_datapoint_id_by_label(data_label)
-                        datapoint = experiment_app.data_client.get_datapoint(datapoint_id)
-                        if data_label == "sample_log":
-                            filename = "sample_rack_" + str(len(sampled_racks) + 1) + ".log"
-                        else:
-                            filename = data_label +  ".log"
-                        experiment_app.data_client.save_datapoint_value(
-                        datapoint_id, 
-                        experiment_app.output_path / filename
-                    )
-                        try:
+            # if bk_workflow and bk_workflow.status.completed:
+            #     rack = final_racks[len(sampled_racks)]
+            #     experiment_app.workcell_client.submit_workflow(experiment_app.workflow_directory / "open_door.workflow.yaml")
+            #     experiment_app.workcell_client.submit_workflow(
+            #     experiment_app.workflow_directory / "transfer_from_bk.workflow.yaml", parameters={"target_location": input_locations[len(sampled_racks)]}
+            #     )
+            #     experiment_app.workcell_client.submit_workflow(experiment_app.workflow_directory / "close_door.workflow.yaml")
+            #     barcode = experiment_app.data_client.get_datapoint_value(bk_workflow.get_datapoint_id_by_label("barcode"))
+            #     if first_run:
+            #         first_run = False
+            #         for index, row in sequence_log_pd.iterrows():
+            #             if row["category"] in ["fill1", "blank1", "rack1"]:
+            #                 sequence_log_pd.at[index, "barcode"] = str(barcode)
+            #         for data_label in ["sample_log", "fill_log", "blank_log", "load_log"]:
+            #             datapoint_id = bk_workflow.get_datapoint_id_by_label(data_label)
+            #             datapoint = experiment_app.data_client.get_datapoint(datapoint_id)
+            #             if data_label == "sample_log":
+            #                 filename = "sample_rack_" + str(len(sampled_racks) + 1) + ".log"
+            #             else:
+            #                 filename = data_label +  ".log"
+            #             experiment_app.data_client.save_datapoint_value(
+            #             datapoint_id, 
+            #             experiment_app.output_path / filename
+            #         )
+            #             try:
                             
-                            experiment_app.data_client.save_datapoint_value(
-                            datapoint_id, 
-                            experiment_app.network_output_path /  filename
-                            )
+            #                 experiment_app.data_client.save_datapoint_value(
+            #                 datapoint_id, 
+            #                 experiment_app.network_output_path /  filename
+            #                 )
                 
-                        except Exception as e:
-                            print(f"Unable to write protocol to network drive: {e}") 
+            #             except Exception as e:
+            #                 print(f"Unable to write protocol to network drive: {e}") 
 
                 
-                else:
-                    for index, row in sequence_log_pd.iterrows():
-                        if row["category"] == "rack" + str(len(sampled_racks)+1):
-                            sequence_log_pd.at[index, "barcode"] = str(barcode)
-                    datapoint_id = bk_workflow.get_datapoint_id_by_label("log_file")
-                    datapoint = experiment_app.data_client.get_datapoint(datapoint_id)
-                    filename = "sample_rack_" + str(len(sampled_racks) + 1) + ".log"
-                    experiment_app.data_client.save_datapoint_value(
-                        datapoint_id, 
-                        experiment_app.output_path / filename
-                    )
-                    try:
+            #     else:
+            #         for index, row in sequence_log_pd.iterrows():
+            #             if row["category"] == "rack" + str(len(sampled_racks)+1):
+            #                 sequence_log_pd.at[index, "barcode"] = str(barcode)
+            #         datapoint_id = bk_workflow.get_datapoint_id_by_label("log_file")
+            #         datapoint = experiment_app.data_client.get_datapoint(datapoint_id)
+            #         filename = "sample_rack_" + str(len(sampled_racks) + 1) + ".log"
+            #         experiment_app.data_client.save_datapoint_value(
+            #             datapoint_id, 
+            #             experiment_app.output_path / filename
+            #         )
+            #         try:
                         
-                        experiment_app.data_client.save_datapoint_value(
-                        datapoint_id, 
-                        experiment_app.network_output_path / filename
-                        )
+            #             experiment_app.data_client.save_datapoint_value(
+            #             datapoint_id, 
+            #             experiment_app.network_output_path / filename
+            #             )
             
-                    except Exception as e:
-                        print(f"Unable to write protocol to network drive: {e}")
-                try:
-                    sequence_log_pd.to_csv(experiment_app.output_path / "AS_sequence_log.csv", index=False)
-                    sequence_log_pd.to_csv(experiment_app.network_output_path / "AS_sequence_log.csv", index=False)
-                except Exception as e:
-                    print(f"Unable to write to network drive: {e}")
+            #         except Exception as e:
+            #             print(f"Unable to write protocol to network drive: {e}")
+            #     try:
+            #         sequence_log_pd.to_csv(experiment_app.output_path / "AS_sequence_log.csv", index=False)
+            #         sequence_log_pd.to_csv(experiment_app.network_output_path / "AS_sequence_log.csv", index=False)
+            #     except Exception as e:
+            #         print(f"Unable to write to network drive: {e}")
                 
-                sampled_racks.append(final_racks[len(sampled_racks)])
-                sampled_racks[-1]["barcode"] = barcode
-                with open(experiment_app.output_path / ("Active_" + str(sampled_racks[-1]["code"])+ "_updated.json"), "w") as f:
-                    json.dump(sampled_racks[-1], f, indent=4)
-                try: 
-                    with open(experiment_app.network_output_path / ("Active_" + str(sampled_racks[-1]["code"])+ "_updated.json"), "w") as f:
-                        json.dump(sampled_racks[-1], f, indent=4)
-                except Exception as e:
-                    print(f"Unable to write to network drive: {e}")
+            #     sampled_racks.append(final_racks[len(sampled_racks)])
+            #     sampled_racks[-1]["barcode"] = barcode
+            #     with open(experiment_app.output_path / ("Active_" + str(sampled_racks[-1]["code"])+ "_updated.json"), "w") as f:
+            #         json.dump(sampled_racks[-1], f, indent=4)
+            #     try: 
+            #         with open(experiment_app.network_output_path / ("Active_" + str(sampled_racks[-1]["code"])+ "_updated.json"), "w") as f:
+            #             json.dump(sampled_racks[-1], f, indent=4)
+            #     except Exception as e:
+            #         print(f"Unable to write to network drive: {e}")
 
-                bk_workflow = None
+            #     bk_workflow = None
 
 
-            if bk_workflow is None and len(sampled_racks) < num_tube_racks:
+            # if bk_workflow is None and len(sampled_racks) < num_tube_racks:
                 
-                experiment_app.workcell_client.submit_workflow(experiment_app.workflow_directory / "open_door.workflow.yaml")
-                experiment_app.workcell_client.submit_workflow(
-                experiment_app.workflow_directory / "transfer_to_bk.workflow.yaml", parameters={"source_location": input_locations[len(sampled_racks)]}
-                )
-                experiment_app.workcell_client.submit_workflow(experiment_app.workflow_directory / "close_door.workflow.yaml")
+            #     experiment_app.workcell_client.submit_workflow(experiment_app.workflow_directory / "open_door.workflow.yaml")
+            #     experiment_app.workcell_client.submit_workflow(
+            #     experiment_app.workflow_directory / "transfer_to_bk.workflow.yaml", parameters={"source_location": input_locations[len(sampled_racks)]}
+            #     )
+            #     experiment_app.workcell_client.submit_workflow(experiment_app.workflow_directory / "close_door.workflow.yaml")
             
                 
-                if first_run:
+            #     if first_run:
                     
-                    bk_workflow = experiment_app.workcell_client.submit_workflow(
-                        experiment_app.workflow_directory / "run_bk_setup.workflow.yaml", parameters=setup_parameters,
-                        await_completion = False
-                    )
-                else:
+            #         bk_workflow = experiment_app.workcell_client.submit_workflow(
+            #             experiment_app.workflow_directory / "run_bk_setup.workflow.yaml", parameters=setup_parameters,
+            #             await_completion = False
+            #         )
+            #     else:
                 
-                    library_id = rack_ids[len(sampled_racks)]
-                    chem_file = experiment_app.find_file_datapoint(datapoints, library_id, "chem")
-                    prompts_file = experiment_app.find_file_datapoint(datapoints, library_id, "prompts")
-                    bk_workflow = experiment_app.workcell_client.submit_workflow(
-                        experiment_app.workflow_directory / "run_bk_fp.workflow.yaml", parameters={"library_id": library_id, "chem_file": chem_file, "prompts_file": prompts_file, "dataset_name": f"tube_rack_{len(sampled_racks) + 1}_stamped" }, await_completion=False
-                    )
+            #         library_id = rack_ids[len(sampled_racks)]
+            #         chem_file = experiment_app.find_file_datapoint(datapoints, library_id, "chem")
+            #         prompts_file = experiment_app.find_file_datapoint(datapoints, library_id, "prompts")
+            #         bk_workflow = experiment_app.workcell_client.submit_workflow(
+            #             experiment_app.workflow_directory / "run_bk_fp.workflow.yaml", parameters={"library_id": library_id, "chem_file": chem_file, "prompts_file": prompts_file, "dataset_name": f"tube_rack_{len(sampled_racks) + 1}_stamped" }, await_completion=False
+            #         )
                 
                 
-            if icp_workflow is None and len(sampled_racks) > len(measured_racks):
-                    labjack_state = labjack_client.get_state()
-                    if labjack_state["volumes"]["AIN0"] > 0.95*113.56:
-                        print("Not enough space in barrel, will not run icp yet")
-                    else:
+            # if icp_workflow is None and len(sampled_racks) > len(measured_racks):
+            #         labjack_state = labjack_client.get_state()
+            #         if labjack_state["volumes"]["AIN0"] > 0.95*113.56:
+            #             print("Not enough space in barrel, will not run icp yet")
+            #         else:
                         
-                        autosampler, items, code, last_dataset = unpack_self_container(sampled_racks[len(measured_racks)])
-                        sample_info_file_path = write_sampleinfo(
-                                            autosampler = autosampler,
-                                            batch=code,
-                                            items=items,
-                                            description="Sample information file for Mina HTS 2",
-                                            calibrate=True,
-                                            rinse=True,
-                                            method="mina_hts_3",
-                                        )
+            #             autosampler, items, code, last_dataset = unpack_self_container(sampled_racks[len(measured_racks)])
+            #             sample_info_file_path = write_sampleinfo(
+            #                                 autosampler = autosampler,
+            #                                 batch=code,
+            #                                 items=items,
+            #                                 description="Sample information file for Mina HTS 2",
+            #                                 calibrate=True,
+            #                                 rinse=True,
+            #                                 method="mina_hts_3",
+            #                             )
 
-                        experiment_app.workcell_client.submit_workflow(
-                            experiment_app.workflow_directory / "transfer_to_icp.workflow.yaml", parameters={"source_location": input_locations[len(measured_racks)]}
-                        )
-                        pump_workflow = experiment_app.workcell_client.submit_workflow(
-                            experiment_app.workflow_directory / "icp_pump.workflow.yaml", await_completion=False
-                        )
-                        icp_workflow = experiment_app.workcell_client.submit_workflow(
-                        experiment_app.workflow_directory / "run_icp.workflow.yaml", parameters={"dataset_name": last_dataset, "sample_info_file": str(sample_info_file_path)}, await_completion=False)
+            #             # experiment_app.workcell_client.submit_workflow(
+            #             #     experiment_app.workflow_directory / "transfer_to_icp.workflow.yaml", parameters={"source_location": input_locations[len(measured_racks)]}
+            #             # )
+            #             pump_workflow = experiment_app.workcell_client.submit_workflow(
+            #                 experiment_app.workflow_directory / "icp_pump.workflow.yaml", await_completion=False
+            #             )
+            #             icp_workflow = experiment_app.workcell_client.submit_workflow(
+            #             experiment_app.workflow_directory / "run_icp.workflow.yaml", parameters={"dataset_name": last_dataset, "sample_info_file": str(sample_info_file_path)}, await_completion=False)
 
                     
             if icp_workflow and icp_workflow.status.completed:
-                    experiment_app.workcell_client.submit_workflow(
-                            experiment_app.workflow_directory / "transfer_from_icp.workflow.yaml", parameters={"target_location": input_locations[len(measured_racks)]}
-                        )
+                    # experiment_app.workcell_client.submit_workflow(
+                    #         experiment_app.workflow_directory / "transfer_from_icp.workflow.yaml", parameters={"target_location": input_locations[len(measured_racks)]}
+                    #     )
                     measured_racks.append(sampled_racks[len(measured_racks)])
+                    code  = final_racks[1]["code"]
                     experiment_app.data_client.save_datapoint_value(
                             icp_workflow.get_datapoint_id_by_label("result_file"), experiment_app.output_path / ("run_"+code+".csv"))
                     try:
@@ -270,6 +276,10 @@ if __name__ == "__main__":
                         experiment_app.data_client.save_datapoint_value(
                             icp_workflow.get_datapoint_id_by_label("result_file"), experiment_app.network_output_path / ("run_"+code+".csv"))
                         convert_report(str(experiment_app.network_output_path / ("run_"+code+".csv")))
+                        code = final_racks[0]["code"]
+                        convert_report(str(experiment_app.output_path / ("run_"+code+".csv")))
+                        convert_report(str(experiment_app.network_output_path / ("run_"+code+".csv")))
+                        
                         #run_analysis(experiment_app.network_output_path, len(sampled_racks),  num_cells)
                     
                     except Exception as e:

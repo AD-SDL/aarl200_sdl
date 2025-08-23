@@ -24,36 +24,36 @@ steps:
     args:
       autofocus: false
       focus: 100
-  # - name: LS load
-  #   node: bk_aarl200
-  #   action: run_preloaded_library
-  #   args:
-  #     library_id: $load_protocol
-  #   files:
-  #     chemfile: $load_chem_file
-  #     promptsfile: $load_prompts_file
-  #   data_labels:
-  #     log_file: load_log
-  # - name: LS blank
-  #   node: bk_aarl200
-  #   action: run_preloaded_library
-  #   args:
-  #     library_id: $blank_protocol
-  #   files:
-  #     chemfile: $blank_chem_file
-  #     promptsfile: $blank_prompts_file
-  #   data_labels:
-  #     log_file: blank_log
-  # - name: LS fill
-  #   node: bk_aarl200
-  #   action: run_preloaded_library
-  #   args:
-  #     library_id: $fill_protocol
-  #   files:
-  #     chemfile: $fill_chem_file
-  #     promptsfile: $fill_prompts_file
-  #   data_labels:
-  #     log_file: fill_log
+  - name: LS load
+    node: bk_aarl200
+    action: run_preloaded_library
+    args:
+      library_id: $load_protocol
+    files:
+      chemfile: $load_chem_file
+      promptsfile: $load_prompts_file
+    data_labels:
+      log_file: load_log
+  - name: LS blank
+    node: bk_aarl200
+    action: run_preloaded_library
+    args:
+      library_id: $blank_protocol
+    files:
+      chemfile: $blank_chem_file
+      promptsfile: $blank_prompts_file
+    data_labels:
+      log_file: blank_log
+  - name: LS fill
+    node: bk_aarl200
+    action: run_preloaded_library
+    args:
+      library_id: $fill_protocol
+    files:
+      chemfile: $fill_chem_file
+      promptsfile: $fill_prompts_file
+    data_labels:
+      log_file: fill_log
   - name: LS Sample
     node: bk_aarl200
     action: run_preloaded_library

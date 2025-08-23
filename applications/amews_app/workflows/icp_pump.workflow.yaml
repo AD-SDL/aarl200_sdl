@@ -1,0 +1,13 @@
+name: ICP pump
+metadata:
+  author: Tobias Ginsburg, Kyle Hippe, Ryan D. Lewis
+  info: Example workflow for WEI
+  version: 0.2
+
+steps:
+  - name: Run Pump
+    node: RS232pump_aarl200
+    action: purge
+    args:
+      rate: 7.5
+      minutes: 8 
