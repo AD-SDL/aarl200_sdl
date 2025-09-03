@@ -48,8 +48,6 @@ class AMEWSApp(ExperimentApplication):
         return str(output_path)
 if __name__ == "__main__":
     experiment_app = AMEWSApp()
-    wf = experiment_app.workcell_client.query_workflow("01K387C071CVAN2WGZ58XKH1BE")
-    wf.get_datapoint_id_by_label("log_file")
     current_time = datetime.datetime.now()
     with experiment_app.manage_experiment(
         run_name=f"AMEWS Experiment Run {current_time}",
@@ -58,7 +56,7 @@ if __name__ == "__main__":
         experiment_app.output_path = experiment_app.output_path
         labjack_client = RestNodeClient("http://146.139.45.9:2001")
 
-        
+        experiment_app.workcell_client.retry = True
         containers = []
         sampled_racks = []
         measured_racks = []

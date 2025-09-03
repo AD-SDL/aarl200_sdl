@@ -28,6 +28,7 @@ class AMEWSApp(ExperimentApplication):
 
 if __name__ == "__main__":
     experiment_app = AMEWSApp()
+    experiment_app.workcell_client.retry = True
     current_time = datetime.datetime.now()
     with experiment_app.manage_experiment(
         run_name=f"AMEWS Experiment Run {current_time}",

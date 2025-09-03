@@ -2,6 +2,7 @@ import datetime
 import json
 import math
 import shutil
+import time
 from madsci.common.types.workflow_types import WorkflowDefinition
 from madsci.common.types.step_types import StepDefinition
 from madsci.client.experiment_application import ExperimentApplication, ExperimentDesign
@@ -49,6 +50,7 @@ class AMEWSApp(ExperimentApplication):
 if __name__ == "__main__":
     experiment_app = AMEWSApp()
     current_time = datetime.datetime.now()
+    experiment_app.workcell_client.retry = True
     with experiment_app.manage_experiment(
         run_name=f"AMEWS Experiment Run {current_time}",
         run_description=f"Run for AMEWS experiment, started at ~{current_time}",
@@ -276,4 +278,5 @@ if __name__ == "__main__":
                         print(e)
                         print("unable to write results to network")
                     icp_workflow = None
+            time.sleep(1)
                     
