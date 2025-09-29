@@ -11,7 +11,7 @@ def nsort(s): # natural sort of wells
 
 def unpack_self_container(
                           container: Any,
-                          vol_min: float = 2300,
+                          vol_min: float = 3000,
                           sort: bool = False): 
     code = container["code"]
 

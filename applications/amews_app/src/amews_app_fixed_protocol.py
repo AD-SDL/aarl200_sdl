@@ -64,10 +64,9 @@ if __name__ == "__main__":
         measured_racks = []
         bk_workflow = None
         icp_workflow = None
-        first_run = True
         input_locations = ["supply_slot_1", "supply_slot_2", "supply_slot_3", "supply_slot_4", "supply_slot_5"]
         setup_parameters = {}
-        experiment_label = "Z:/RESULTS\\BK_run24_20250822_171736" 
+        experiment_label = "Z:/RESULTS\\BK_AMEWS_24cell_20250926_093035" 
         experiment_folder = experiment_label.replace("Z:/RESULTS\\", "")
         experiment_app.network_output_path = experiment_app.network_output_path / experiment_folder
         experiment_app.output_path = experiment_app.output_path / experiment_folder
@@ -128,6 +127,7 @@ if __name__ == "__main__":
                 rack = json.load(f)
                 final_racks.append(rack)
         icp_workflow = None
+        bk_workflow = None
         bk_step_counter = 0
        
         while len(measured_racks) < num_tube_racks:
@@ -142,8 +142,7 @@ if __name__ == "__main__":
                 )
                 experiment_app.workcell_client.submit_workflow(experiment_app.workflow_directory / "close_door.workflow.yaml")
                 barcode = experiment_app.data_client.get_datapoint_value(bk_workflow.get_datapoint_id_by_label("barcode"))
-                if first_run:
-                    first_run = False
+                if len(sampled_racks) == 0:
                     for index, row in sequence_log_pd.iterrows():
                         if row["category"] in ["load1", "fill1", "blank1", "rack1"]:
                             sequence_log_pd.at[index, "barcode"] = str(barcode)
@@ -217,7 +216,7 @@ if __name__ == "__main__":
                 experiment_app.workcell_client.submit_workflow(experiment_app.workflow_directory / "close_door.workflow.yaml")
             
                 
-                if first_run:
+                if len(sampled_racks) == 0:
                     
                     bk_workflow = experiment_app.workcell_client.submit_workflow(
                         experiment_app.workflow_directory / "run_bk_setup.workflow.yaml", parameters=setup_parameters,
@@ -244,10 +243,10 @@ if __name__ == "__main__":
                                             autosampler = autosampler,
                                             batch=code,
                                             items=items,
-                                            description="Sample information file for Mina HTS 2",
+                                            description="Sample information file for Mina HTS 3",
                                             calibrate=True,
                                             rinse=True,
-                                            method="mina_hts_3",
+                                            method="Mina_hts_v03",
                                         )
 
                         experiment_app.workcell_client.submit_workflow(
@@ -261,6 +260,9 @@ if __name__ == "__main__":
 
                     
             if icp_workflow and icp_workflow.status.completed:
+                    pump_workflow = experiment_app.workcell_client.submit_workflow(
+                            experiment_app.workflow_directory / "icp_pump.workflow.yaml", await_completion=False
+                        )
                     experiment_app.workcell_client.submit_workflow(
                             experiment_app.workflow_directory / "transfer_from_icp.workflow.yaml", parameters={"target_location": input_locations[len(measured_racks)]}
                         )
@@ -268,10 +270,10 @@ if __name__ == "__main__":
                     experiment_app.data_client.save_datapoint_value(
                             icp_workflow.get_datapoint_id_by_label("result_file"), experiment_app.output_path / ("run_"+code+".csv"))
                     try:
-                        convert_report(str(experiment_app.output_path / ("run_"+code+".csv")))
+                        #convert_report(str(experiment_app.output_path / ("run_"+code+".csv")))
                         experiment_app.data_client.save_datapoint_value(
                             icp_workflow.get_datapoint_id_by_label("result_file"), experiment_app.network_output_path / ("run_"+code+".csv"))
-                        convert_report(str(experiment_app.network_output_path / ("run_"+code+".csv")))
+                        #convert_report(str(experiment_app.network_output_path / ("run_"+code+".csv")))
                         #run_analysis(experiment_app.network_output_path, len(sampled_racks),  num_cells)
                     
                     except Exception as e:
