@@ -1,5 +1,6 @@
-name: AARL200 Data Manager
-description: A data manager for AARL200
+name: Data Manager
+description: A data manager for RAPID200
+manager_id: 01K8ZFQ0WFKP9F6ACE2B9TVVX5
 manager_type: data_manager
 url: http://controlroom1.cse.anl.gov:8003
 host: controlroom1.cse.anl.gov

@@ -9,7 +9,7 @@ parameters:
   - "name": location
 steps:
   - name: Home UR
-    node: ur_aarl200
+    node: ur_RAPID200
     action: movej
     args:
       acceleration: 0.35
@@ -17,7 +17,7 @@ steps:
     locations:
       joints: arm_safe_up
   - name: Position rail
-    node: vention_rail_aarl200
+    node: vention_rail_RAPID200
     action: move
     args:
       speed: 30
@@ -25,7 +25,7 @@ steps:
     locations:
       position: $location
   - name: Pick up tube rack
-    node: ur_aarl200
+    node: ur_RAPID200
     action: gripper_pick
     args:
       gripper_close: 100
@@ -33,18 +33,18 @@ steps:
       home: supply_station_safe
       source: $location
   - name: Move to Safe
-    node: ur_aarl200
+    node: ur_RAPID200
     action: movej
     locations:
        joints: arm_safe_up
   - name: Slow down movement
-    node: ur_aarl200
+    node: ur_RAPID200
     action: set_movement_params
     args:
       acceleration: 0.2
       velocity: 0.2
   - name: Place In Supply Station
-    node: ur_aarl200
+    node: ur_RAPID200
     action: gripper_place
     args:
       target_approach_distance: 0.12
@@ -52,7 +52,7 @@ steps:
       home: supply_station_safe
       target: $location
   - name: Home UR
-    node: ur_aarl200
+    node: ur_RAPID200
     action: movej
     args:
       acceleration: 0.35

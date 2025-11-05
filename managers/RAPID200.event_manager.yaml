@@ -1,6 +1,6 @@
-name: AARL200 Event Manager
+name: RAPID200 Event Manager
+description: An event manager for the RAPID200 autonomous laboratory
 manager_id: 01JSPSRD2588YHH60S0AZ42C4A
-description: An event manager for the AARL200 autonomous laboratory
 manager_type: event_manager
 url: http://controlroom1.cse.anl.gov:8001
 host: controlroom1.cse.anl.gov

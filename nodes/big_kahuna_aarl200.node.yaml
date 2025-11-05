@@ -1,7 +1,7 @@
-node_name: big_kahuna_aarl200
+node_name: big_kahuna_RAPID200
 node_id: 01JT6MTZ0QKKPBMWRE1TPKQX3Z
 node_url: null
-node_description: Big Kahuna instrument for aarl200
+node_description: Big Kahuna instrument for RAPID200
 node_type: device
 module_name: big_kahuna_module
 module_version: 0.0.1

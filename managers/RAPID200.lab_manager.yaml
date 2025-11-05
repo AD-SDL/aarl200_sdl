@@ -1,5 +1,6 @@
-name: AARL200 lab manager
-description: The lab manager for AARL200
+name: RAPID200 lab manager
+description: The lab manager for RAPID200
+manager_id: 01K8ZFQ0QPFNEX9NEHWP8ERJP6
 manager_type: lab_manager
 url: http://controlroom1.cse.anl.gov:8000
 host: controlroom1.cse.anl.gov

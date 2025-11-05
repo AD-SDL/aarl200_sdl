@@ -1,7 +1,165 @@
-name: aarl200_workcell
-include:
-  # - frigate/aarl200_frigate.compose.yaml
-  - docker/databases.compose.yaml
-  - docker/managers.compose.yaml
-  - docker/nodes.compose.yaml
-  - docker/ops.compose.yaml
+name: RAPID200_workcell
+
+# * Usage Notes:
+# 1. Environment variables can be set in a `.env` file or directly in the shell.
+# 2. The `REPO_PATH` variable should point to the root of the repository.
+# 3. The `example_lab` directory should contain the lab definition and module files.
+# 4. The `madsci` image is built from the Dockerfile in the current directory.
+# 5. The `madsci_dashboard` image is built from the Dockerfile.dashboard in the current directory.
+# 6. Services are configured to use the host network mode to simplify port configuration. Production deployments may require a different network configuration.
+# 7. Services are configured to restart unless stopped manually.
+# 8. The container images are built with the latest tag and a dev tag for development purposes.
+
+
+# * Common configuration
+x-madsci-service: &madsci-service
+  image: ghcr.io/ad-sdl/madsci:latest
+  environment:
+    - USER_ID=${USER_ID:-1000}
+    - GROUP_ID=${GROUP_ID:-1000}
+  network_mode: host
+  env_file:
+    - .env # Optional: Load environment variables from a .env file
+  volumes:
+    - ${REPO_PATH:-.}/.madsci:/home/madsci/.madsci
+    - ${REPO_PATH:-.}/managers:/home/madsci/managers
+  restart: unless-stopped
+
+services:
+  mongodb:
+    container_name: mongodb
+    image: mongo:8.0
+    restart: unless-stopped
+    ports:
+      - 27017:27017
+    volumes:
+      - ${REPO_PATH:-.}/.madsci/mongodb:/data/db
+  redis:
+    container_name: redis
+    image: redis:7.4
+    restart: unless-stopped
+    ports:
+      - 6379:6379
+    volumes:
+      - ${REPO_PATH:-.}/.madsci/redis:/data
+    command: redis-server --appendonly yes --save 900 1 --save 300 10 --save 60 10000
+  postgres:
+    container_name: postgres
+    image: postgres:17
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=madsci
+      - POSTGRES_PASSWORD=madsci
+      - POSTGRES_DB=resources
+    ports:
+      - 5432:5432
+    volumes:
+      - ${REPO_PATH:-.}/.madsci/postgres:/var/lib/postgresql/data
+  minio:
+    container_name: minio
+    image: minio/minio
+    restart: unless-stopped
+    environment:
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin
+    ports:
+      - 9000:9000
+      - 9001:9001
+    volumes:
+      - ${REPO_PATH:-.}/.madsci/minio:/home/madsci/.madsci/minio
+    command: server /home/madsci/.madsci/minio --console-address ":9001"
+
+  # *Managers
+
+  lab_manager:
+    <<: *madsci-service
+    container_name: lab_manager_RAPID200
+    environment:
+      - LAB_MANAGER_DEFINITION=managers/RAPID200.lab_manager.yaml
+    image: ghcr.io/ad-sdl/madsci_dashboard:latest
+    command: python -m madsci.squid.lab_server
+    depends_on:
+      - event_manager
+
+  event_manager:
+    <<: *madsci-service
+    container_name: event_manager_RAPID200
+    environment:
+      - EVENT_MANAGER_DEFINITION=managers/RAPID200.event_manager.yaml
+    command: python -m madsci.event_manager.event_server
+    depends_on:
+        - mongodb
+
+  experiment_manager:
+    <<: *madsci-service
+    container_name: experiment_manager_RAPID200
+    environment:
+      - EXPERIMENT_MANAGER_DEFINITION=managers/RAPID200.experiment_manager.yaml
+    command: python -m madsci.experiment_manager.experiment_server
+    depends_on:
+      - mongodb
+      - lab_manager
+
+  resource_manager:
+    <<: *madsci-service
+    container_name: resource_manager_RAPID200
+    command: python -m madsci.resource_manager.resource_server
+    environment:
+      - RESOURCE_MANAGER_DEFINITION=managers/RAPID200.resource_manager.yaml
+    depends_on:
+      - postgres
+      - event_manager
+
+  data_manager:
+    <<: *madsci-service
+    container_name: data_manager_RAPID200
+    command: python -m madsci.data_manager.data_server
+    environment:
+      - DATA_MANAGER_DEFINITION=managers/RAPID200.data_manager.yaml
+    depends_on:
+      - mongodb
+      - event_manager
+
+  location_manager:
+    <<: *madsci-service
+    container_name: location_manager_RAPID200
+    command: python -m madsci.location_manager.location_server
+    environment:
+      - LOCATION_MANAGER_DEFINITION=managers/RAPID200.location_manager.yaml
+    depends_on:
+      - redis
+      - event_manager
+      - resource_manager
+
+  workcell_manager:
+    <<: *madsci-service
+    container_name: workcell_manager_RAPID200
+    environment:
+      - WORKCELL_MANAGER_DEFINITION=managers/RAPID200.workcell_manager.yaml
+    command: python -m madsci.workcell_manager.workcell_server --cold_start_delay 0
+    depends_on:
+      - redis
+      - mongodb
+      - resource_manager
+      - event_manager
+      - postgres
+      - location_manager
+
+
+   # *Nodes
+  ur_RAPID200:
+    image: ghcr.io/ad-sdl/ur_module:latest
+    container_name: ur_RAPID200
+    network_mode: host
+    environment:
+      - NODE_DEFINITION=nodes/ur_RAPID200.node.yaml
+      - NODE_URL=http://controlroom1.cse.anl.gov:3011
+    command: python -m ur_rest_node
+  vention_rail_module:
+    image: ghcr.io/ad-sdl/vention_rail_module:latest
+    container_name: vention_rail_RAPID200
+    network_mode: host
+    environment:
+      - NODE_DEFINITION=nodes/vention_rail_RAPID200.node.yaml
+      - NODE_URL=http://controlroom1.cse.anl.gov:3022
+    command: python -m rail_rest_node

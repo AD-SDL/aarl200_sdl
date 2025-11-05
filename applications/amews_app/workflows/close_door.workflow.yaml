@@ -7,7 +7,7 @@ metadata:
 
 steps:
   - name: Home UR
-    node: ur_aarl200
+    node: ur_RAPID200
     action: movej
     args:
       acceleration: 0.35
@@ -15,7 +15,7 @@ steps:
     locations:
       joints: arm_safe_up
   - name: Position Rail
-    node: vention_rail_aarl200
+    node: vention_rail_RAPID200
     action: move
     args:
       speed: 10
@@ -23,33 +23,33 @@ steps:
     locations:
       position: big_kahuna_rail
   - name: Set Params
-    node: ur_aarl200
+    node: ur_RAPID200
     action: set_movement_params
     args:
       gripper_force: 50
   - name: Close Gripper
-    node: ur_aarl200
+    node: ur_RAPID200
     action: toggle_gripper
     args:
       close: true
-  - name: Move to door opening position
-    node: ur_aarl200
+  - name: Move to door closing position
+    node: ur_RAPID200
     action: movej
     args:
       acceleration: 0.35
       velocity: 0.35
     locations: 
       joints: big_kahuna_door_open_outside_approach
-  - name: Move to door opening position
-    node: ur_aarl200
+  - name: Move to door closing position
+    node: ur_RAPID200
     action: movej
     args:
       acceleration: 0.35
       velocity: 0.35
     locations: 
       joints: big_kahuna_door_open_outside
-  - name: Open Door
-    node: ur_aarl200
+  - name: Close Door
+    node: ur_RAPID200
     action: movel
     args: 
       velocity: 0.05
@@ -57,7 +57,7 @@ steps:
     locations:
        target: big_kahuna_door_closed_inside
   - name: Home UR
-    node: ur_aarl200
+    node: ur_RAPID200
     action: movej
     args:
       acceleration: 0.35
@@ -65,12 +65,12 @@ steps:
     locations:
       joints: arm_safe_up
   - name: toggle_gripper
-    node: ur_aarl200
+    node: ur_RAPID200
     action: toggle_gripper
     args:
       open: true
   - name: Set Params
-    node: ur_aarl200
+    node: ur_RAPID200
     action: set_movement_params
     args:
       gripper_force: 200

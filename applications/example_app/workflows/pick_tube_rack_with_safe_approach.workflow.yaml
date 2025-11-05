@@ -10,45 +10,45 @@ metadata:
 
 flowdef:
   - name: Home UR
-    module: ur_aarl200
+    module: ur_RAPID200
     action: movej
     args:
-      joints: ur_aarl200.travel_safe_joints
+      joints: ur_RAPID200.travel_safe_joints
       a: 0.2
       v: 0.2
   # - name: Move Rail to Zero
-  #   module: vention_rail_aarl200
+  #   module: vention_rail_RAPID200
   #   action: move
   #   args:
   #     position: 0
   #     speed: 30
   #     acceleration: 10
   # - name: Home Rail
-  #   module: vention_rail_aarl200
+  #   module: vention_rail_RAPID200
   #   action: home
   - name: Move Rail to Safe Approach Position
-    module: vention_rail_aarl200
+    module: vention_rail_RAPID200
     action: move
     args:
-      position: vention_rail_aarl200.door_rail
+      position: vention_rail_RAPID200.door_rail
       speed: 30
       acceleration: 10
   - name: Move Arm to Safe Approach Position
-    module: ur_aarl200
+    module: ur_RAPID200
     action: movej
     args:
-      joints: ur_aarl200.big_kahuna_safe_joints
+      joints: ur_RAPID200.big_kahuna_safe_joints
       acceleration: 0.35
       velocity: 0.35
   - name: Move Rail to Pick Position
-    module: vention_rail_aarl200
+    module: vention_rail_RAPID200
     action: move
     args:
       position: 0
       speed: 30
       acceleration: 10
   - name: Set UR Params
-    module: ur_aarl200
+    module: ur_RAPID200
     action: set_movement_params
     args:
       velocity: 0.35
@@ -56,32 +56,32 @@ flowdef:
       gripper_speed: 50
       gripper_force: 150
   - name : Gripper Pick
-    module : ur_aarl200
+    module : ur_RAPID200
     action : gripper_pick
     args : 
-      home : ur_aarl200.big_kahuna_safe_joints
-      source : ur_aarl200.big_kahuna_supply_rack_icp
+      home : ur_RAPID200.big_kahuna_safe_joints
+      source : ur_RAPID200.big_kahuna_supply_rack_icp
       source_approach_axis : null
       source_approach_distance : .15
       gripper_close : null
   - name: Move Rail to Safe Approach Position
-    module: vention_rail_aarl200
+    module: vention_rail_RAPID200
     action: move
     args:
-      position: vention_rail_aarl200.door_rail
+      position: vention_rail_RAPID200.door_rail
       speed: 30
       acceleration: 10
   - name: Move Arm to Safe Approach Position
-    module: ur_aarl200
+    module: ur_RAPID200
     action: movej
     args:
-      joints: ur_aarl200.big_kahuna_safe_joints
+      joints: ur_RAPID200.big_kahuna_safe_joints
       acceleration: 0.35
       velocity: 0.35
   - name: Home UR
-    module: ur_aarl200
+    module: ur_RAPID200
     action: movej
     args:
-      joints: ur_aarl200.travel_safe_joints
+      joints: ur_RAPID200.travel_safe_joints
       acceleration: 0.35
       velocity: 0.35

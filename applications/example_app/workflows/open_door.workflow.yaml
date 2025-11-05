@@ -10,64 +10,64 @@ metadata:
 
 flowdef:
   - name: Home UR
-    module: ur_aarl200
+    module: ur_RAPID200
     action: movej
     args:
-      joints: ur_aarl200.travel_safe_joints
+      joints: ur_RAPID200.travel_safe_joints
       acceleration: 0.35
       velocity: 0.35
   - name: Move Rail to Zero
-    module: vention_rail_aarl200
+    module: vention_rail_RAPID200
     action: move
     args:
       position: 0
       speed: 20
       acceleration: 10
   - name: Home Rail
-    module: vention_rail_aarl200
+    module: vention_rail_RAPID200
     action: home
   - name: Back out Rail
-    module: vention_rail_aarl200
+    module: vention_rail_RAPID200
     action: move
     args:
       position: 50
       speed: 10
       acceleration: 10
   - name: Close Gripper
-    module: ur_aarl200
+    module: ur_RAPID200
     action: toggle_gripper
     args:
       close: true
   - name: Move to door closed home position
-    module: ur_aarl200
+    module: ur_RAPID200
     action: movej
     args:
-      joints: ur_aarl200.door_closed_safe_joints
+      joints: ur_RAPID200.door_closed_safe_joints
       velocity: 0.35
       acceleration: 0.35
   - name: Move to door opening position
-    module: ur_aarl200
+    module: ur_RAPID200
     action: movel
     args:
-      location: ur_aarl200.door_closed_outside
+      location: ur_RAPID200.door_closed_outside
       acceleration: 0.35
       velocity: 0.35
   - name: Open Door
-    module: ur_aarl200
+    module: ur_RAPID200
     action: movel
     args:
-      location: ur_aarl200.door_open_inside
+      location: ur_RAPID200.door_open_inside
       velocity: 0.1
       acceleration: 0.1
   - name: Home UR
-    module: ur_aarl200
+    module: ur_RAPID200
     action: movej
     args:
-      joints: ur_aarl200.travel_safe_joints
+      joints: ur_RAPID200.travel_safe_joints
       acceleration: 0.35
       velocity: 0.35
   # - name: Set UR Params
-  #   module: ur_aarl200
+  #   module: ur_RAPID200
   #   action: set_movement_params
   #   args:
   #     velocity: 0.1
@@ -75,12 +75,12 @@ flowdef:
   #     gripper_speed: 50
   #     gripper_force: 150
   # - name : Test Gripper Transfer
-  #   module : ur_aarl200
+  #   module : ur_RAPID200
   #   action : gripper_transfer
   #   args : 
-  #     home : ur_aarl200.home_position
-  #     source : ur_aarl200.supply_rack_icp1
-  #     target : ur_aarl200.supply_rack_icp1
+  #     home : ur_RAPID200.home_position
+  #     source : ur_RAPID200.supply_rack_icp1
+  #     target : ur_RAPID200.supply_rack_icp1
   #     source_approach_axis : null
   #     target_approach_axis : null
   #     source_approach_distance : .15

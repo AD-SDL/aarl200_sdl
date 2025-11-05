@@ -1,7 +1,7 @@
-node_name: icp_aarl200
+node_name: icp_RAPID200
 node_id: 01JSQ7GY5GMGV5YF83QRM264V3
 node_url: null
-node_description: ICP instrument for aarl200
+node_description: ICP instrument for RAPID200
 node_type: device
 module_name: pe_icp_module
 module_version: 0.0.1

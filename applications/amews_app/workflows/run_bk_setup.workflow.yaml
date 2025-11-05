@@ -5,62 +5,65 @@ metadata:
   version: 0.2
 
 parameters:
-  - "name": blank_protocol
-  - "name": fill_protocol
-  - "name": sample_protocol
-  - "name": load_protocol
-  - "name": load_chem_file
-  - "name": load_prompts_file
-  - "name": blank_chem_file
-  - "name": blank_prompts_file
-  - "name": fill_chem_file
-  - "name": fill_prompts_file
-  - "name": sample_chem_file
-  - "name": sample_prompts_file
+  json_inputs:
+    - key: blank_protocol
+    - key: fill_protocol
+    - key: sample_protocol
+    - key: load_protocol
+  file_inputs:
+    - key: load_chem_file
+    - key: load_prompts_file
+    - key: blank_chem_file
+    - key: blank_prompts_file
+    - key: fill_chem_file
+    - key: fill_prompts_file
+    - key: sample_chem_file
+    - key: sample_prompts_file
 steps:
   - name: Read Barcode
-    node: camera_aarl200
+    node: camera_RAPID200
+    key: barcode
     action: read_barcode
     args:
       autofocus: false
       focus: 100
   - name: LS load
-    node: bk_aarl200
+    node: bk_RAPID200
+    key: load
     action: run_preloaded_library
-    args:
-      library_id: $load_protocol
+    parameters:
+      args:
+        library_id: load_protocol
     files:
-      chemfile: $load_chem_file
-      promptsfile: $load_prompts_file
-    data_labels:
-      log_file: load_log
+      chemfile: load_chem_file
+      promptsfile: load_prompts_file
   - name: LS blank
-    node: bk_aarl200
+    node: bk_RAPID200
+    key: blank
     action: run_preloaded_library
-    args:
-      library_id: $blank_protocol
+    parameters:
+      args:
+        library_id: blank_protocol
     files:
-      chemfile: $blank_chem_file
-      promptsfile: $blank_prompts_file
-    data_labels:
-      log_file: blank_log
+      chemfile: blank_chem_file
+      promptsfile: blank_prompts_file
   - name: LS fill
-    node: bk_aarl200
+    node: bk_RAPID200
+    key: fill
     action: run_preloaded_library
-    args:
-      library_id: $fill_protocol
+    parameters:
+      args:
+        library_id: fill_protocol
     files:
-      chemfile: $fill_chem_file
-      promptsfile: $fill_prompts_file
-    data_labels:
-      log_file: fill_log
+      chemfile: fill_chem_file
+      promptsfile: fill_prompts_file
   - name: LS Sample
-    node: bk_aarl200
+    node: bk_RAPID200
+    key: sample
     action: run_preloaded_library
-    args:
-      library_id: $sample_protocol
+    parameters:
+      args:
+        library_id: sample_protocol
     files:
-      chemfile: $sample_chem_file
-      promptsfile: $sample_prompts_file
-    data_labels:
-      log_file: sample_log
+      chemfile: sample_chem_file
+      promptsfile: sample_prompts_file

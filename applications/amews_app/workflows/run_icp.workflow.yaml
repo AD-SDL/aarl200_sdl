@@ -6,32 +6,38 @@ metadata:
   version: 0.2
 
 parameters:
-  - "name": sample_info_file
-  - "name": dataset_name
+  json_inputs:
+    - key: dataset_name
+  file_inputs:
+    - key: sample_info_file
+  
 
 steps:
   - name : start_plasma
-    node : icp_aarl200
+    node : icp_RAPID200
     action : plasma_on
     args :
       stabilization_delay: 300
 
   - name : Run Analysis
-    node : icp_aarl200
+    node : icp_RAPID200
     action : run_analysis
+    key: icp_analysis
     args : 
       method_name : "Mina_hts_v03"
-      dataset_name : $dataset_name
       export_template_name : "MeansTemplate.xptx"
       wavelength_realign : 0
       precalibrate : false
       use_active_method : false
       wait_for_completion : true
+    parameters:
+      args:
+        dataset_name : dataset_name
     files:
-      sample_info_file : $sample_info_file
+      sample_info_file : sample_info_file
     checks : null 
 
   - name : Stop Plasma
-    node : icp_aarl200
+    node : icp_RAPID200
     action : plasma_off
     

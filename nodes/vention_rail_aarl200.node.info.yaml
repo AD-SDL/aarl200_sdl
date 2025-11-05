@@ -1,7 +1,7 @@
-node_name: vention_rail_aarl200
+node_name: vention_rail_RAPID200
 node_id: 01JSMVRK0VJ2N00W87V27BD50C
 node_url: null
-node_description: The vention rail for aarl200
+node_description: The vention rail for RAPID200
 node_type: device
 module_name: vention_rail_module
 module_version: 0.0.1

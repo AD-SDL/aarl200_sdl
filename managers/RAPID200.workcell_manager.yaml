@@ -1,0 +1,36 @@
+name: RAPID200 Workcell
+manager_type: workcell_manager
+manager_id: 01JSMS2CZPSS6J3Z71YBAY5SV5
+description: null
+nodes:
+  RS232pump_RAPID200: http://146.139.45.9:2002/
+  bk_RAPID200: http://csi0365887.cse.anl.gov:2000/
+  camera_RAPID200: http://csi0365887.cse.anl.gov:2001/
+  icp_RAPID200: http://146.139.45.9:2000/
+  labajack_RAPID200: http://146.139.45.9:2001/
+  ur_RAPID200: http://controlroom1.cse.anl.gov:3011/
+  vention_rail_RAPID200: http://controlroom1.cse.anl.gov:3022/
+config:
+  host: controlroom1.cse.anl.gov
+  port: 8005
+  workcells_directory: /home/madsci/.madsci/workcells
+  redis_host: localhost
+  redis_port: 6379
+  redis_password: null
+  event_client_config:
+    name: null
+    event_server_url: http://controlroom1.cse.anl.gov:8001
+    log_level: 20
+    source: {}
+    log_dir: ~/.madsci/logs
+  scheduler_update_interval: 2.0
+  node_update_interval: 1.0
+  auto_start: true
+  clear_workflows: false
+  cold_start_delay: 0
+  scheduler: madsci.workcell_manager.schedulers.default_scheduler
+  data_server_url: http://controlroom1.cse.anl.gov:8003/
+  resource_server_url: http://controlroom1.cse.anl.gov:8004/
+  mongo_url: null
+  get_action_result_retries: 3
+workcell_directory: /home/madsci/.madsci/workcells/RAPID200 Workcell

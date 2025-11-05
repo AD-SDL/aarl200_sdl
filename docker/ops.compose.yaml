@@ -1,9 +1,0 @@
-services:
-  aarl200_uptime:
-    container_name: aarl200_uptime
-    image: louislam/uptime-kuma
-    volumes:
-      - ${LOCAL_WORKSPACE_FOLDER:-../}.madsci/uptime:/app/data
-    ports:
-      - 9001:3001
-    restart: unless-stopped

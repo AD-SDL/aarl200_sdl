@@ -6,19 +6,19 @@ metadata:
 
 flowdef:
   - name: Home UR
-    module: ur_aarl200
+    module: ur_RAPID200
     action: movej
     args:
-      joints: ur_aarl200.travel_safe_joints
+      joints: ur_RAPID200.travel_safe_joints
       acceleration: 0.35
       velocity: 0.35
   - name: Move Rail to Zero
-    module: vention_rail_aarl200
+    module: vention_rail_RAPID200
     action: move
     args:
       position: 0
       speed: 20
       acceleration: 10
   - name: Home Rail
-    module: vention_rail_aarl200
+    module: vention_rail_RAPID200
     action: home

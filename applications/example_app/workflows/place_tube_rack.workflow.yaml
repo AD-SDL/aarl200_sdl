@@ -10,21 +10,21 @@ metadata:
 
 flowdef:
   - name: Home UR
-    module: ur_aarl200
+    module: ur_RAPID200
     action: movej
     args:
       joints: payload.travel_safe_joints
       acceleration: 0.35
       velocity: 0.35
   - name: Move Rail to Place Position
-    module: vention_rail_aarl200
+    module: vention_rail_RAPID200
     action: move
     args:
       position: payload.rail_position
       speed: 30
       acceleration: 10
   - name: Set UR Params
-    module: ur_aarl200
+    module: ur_RAPID200
     action: set_movement_params
     args:
       velocity: 0.35
@@ -32,7 +32,7 @@ flowdef:
       gripper_speed: 50
       gripper_force: 150
   - name : Test Gripper Place
-    module : ur_aarl200
+    module : ur_RAPID200
     action : gripper_place
     args : 
       home : payload.arm_safe_joints
@@ -41,7 +41,7 @@ flowdef:
       target_approach_distance : .15
       gripper_open : null
   - name: Home UR
-    module: ur_aarl200
+    module: ur_RAPID200
     action: movej
     args:
       joints: payload.travel_safe_joints

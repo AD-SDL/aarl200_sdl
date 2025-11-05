@@ -57,33 +57,16 @@ if __name__ == "__main__":
     ):
         experiment_app.output_path = experiment_app.output_path
         labjack_client = RestNodeClient("http://146.139.45.9:2001")
-        experiment_app.workcell_client.submit_workflow(experiment_app.workflow_directory / "open_door.workflow.yaml")
-        experiment_app.workcell_client.submit_workflow(
-                experiment_app.workflow_directory / "transfer_to_bk.workflow.yaml", parameters={"source_location":"supply_slot_3"}
-                )
-        experiment_app.workcell_client.submit_workflow(experiment_app.workflow_directory / "close_door.workflow.yaml")
-        experiment_app.workcell_client.submit_workflow(experiment_app.workflow_directory / "open_door.workflow.yaml")
-        experiment_app.workcell_client.submit_workflow(
-                experiment_app.workflow_directory / "transfer_from_bk.workflow.yaml", parameters={"target_location":"supply_slot_3"}
-                )
-        experiment_app.workcell_client.submit_workflow(experiment_app.workflow_directory / "close_door.workflow.yaml")
-        experiment_app.workcell_client.submit_workflow(
-                            experiment_app.workflow_directory / "transfer_to_icp.workflow.yaml", parameters={"source_location": "supply_slot_3"}
-                        )
-        experiment_app.workcell_client.submit_workflow(
-                            experiment_app.workflow_directory / "transfer_from_icp.workflow.yaml", parameters={"target_location": "supply_slot_3"})
-        raise("crap")
-        
+
         
         containers = []
         sampled_racks = []
         measured_racks = []
         bk_workflow = None
         icp_workflow = None
-        first_run = True
         input_locations = ["supply_slot_1", "supply_slot_2", "supply_slot_3", "supply_slot_4", "supply_slot_5"]
         setup_parameters = {}
-        experiment_label = "Z:/RESULTS\\BK_AMEWS_24cell_20250926_093035" 
+        experiment_label = "Z:/RESULTS\\BK_AMEWS_24cell_20251021_193017" 
         experiment_folder = experiment_label.replace("Z:/RESULTS\\", "")
         experiment_app.network_output_path = experiment_app.network_output_path / experiment_folder
         experiment_app.output_path = experiment_app.output_path / experiment_folder
@@ -145,14 +128,12 @@ if __name__ == "__main__":
                 final_racks.append(rack)
         icp_workflow = None
         bk_workflow = None
+        # bk_workflow = experiment_app.workcell_client.query_workflow("01K84QBWGT7ZEE8XHEZQM71BPD")
+
         bk_step_counter = 0
-        experiment_app.workcell_client.submit_workflow(experiment_app.workflow_directory / "open_door.workflow.yaml")
-        experiment_app.workcell_client.submit_workflow(experiment_app.workflow_directory / "transfer_from_bk.workflow.yaml", parameters={"target_location": "supply_slot_1"})
-        experiment_app.workcell_client.submit_workflow(experiment_app.workflow_directory / "close_door.workflow.yaml")
-                   
-        first_run = False
-        sampled_racks.append(final_racks[0])
-        measured_racks.append(final_racks[0])
+
+        sampled_racks.append(final_racks[0]) #mk append first rack sampled state
+       
         while len(measured_racks) < num_tube_racks:
             bk_workflow = experiment_app.workcell_client.query_workflow(bk_workflow.workflow_id) if bk_workflow else None
             icp_workflow = experiment_app.workcell_client.query_workflow(icp_workflow.workflow_id) if icp_workflow else None
@@ -165,8 +146,7 @@ if __name__ == "__main__":
                 )
                 experiment_app.workcell_client.submit_workflow(experiment_app.workflow_directory / "close_door.workflow.yaml")
                 barcode = experiment_app.data_client.get_datapoint_value(bk_workflow.get_datapoint_id_by_label("barcode"))
-                if first_run:
-                    first_run = False
+                if len(sampled_racks) == 0:
                     for index, row in sequence_log_pd.iterrows():
                         if row["category"] in ["load1", "fill1", "blank1", "rack1"]:
                             sequence_log_pd.at[index, "barcode"] = str(barcode)
@@ -240,7 +220,7 @@ if __name__ == "__main__":
                 experiment_app.workcell_client.submit_workflow(experiment_app.workflow_directory / "close_door.workflow.yaml")
             
                 
-                if first_run:
+                if len(sampled_racks) == 0:
                     
                     bk_workflow = experiment_app.workcell_client.submit_workflow(
                         experiment_app.workflow_directory / "run_bk_setup.workflow.yaml", parameters=setup_parameters,

@@ -1,4 +1,4 @@
-workcell_name: AARL200 Workcell
+workcell_name: RAPID200 Workcell
 manager_type: workcell_manager
 workcell_id: 01JSMS2CZPSS6J3Z71YBAY5SV5
 description: null
@@ -26,32 +26,33 @@ config:
   mongo_url: null
   get_action_result_retries: 3
 nodes:
-  bk_aarl200: http://CSI0365887.cse.anl.gov:2000
-  camera_aarl200: http://CSI0365887.cse.anl.gov:2001
-  icp_aarl200: http://146.139.45.9:2000
-  labajack_aarl200: http://146.139.45.9:2001
-  ur_aarl200: http://controlroom1.cse.anl.gov:3011
-  vention_rail_aarl200: http://controlroom1.cse.anl.gov:3022
+  RS232pump_RAPID200: http://146.139.45.9:2002
+  bk_RAPID200: http://CSI0365887.cse.anl.gov:2000
+  camera_RAPID200: http://CSI0365887.cse.anl.gov:2001
+  icp_RAPID200: http://146.139.45.9:2000
+  labajack_RAPID200: http://146.139.45.9:2001
+  ur_RAPID200: http://controlroom1.cse.anl.gov:3011
+  vention_rail_RAPID200: http://controlroom1.cse.anl.gov:3022
 locations:
 - location_name: big_kahuna_rail
   location_id: 01JSPPYZTTWV7506NA9B4D14AY
   description: position for the big kahuna door and placement
   lookup:
-    vention_rail_aarl200: 50
+    vention_rail_RAPID200: 50
   resource_definition: null
   resource_id: null
 - location_name: supply_slot_1
   location_id: 01JSPPYZTTTSPNQEEB1M6Z3WFP
   description: Supply slot 1 on the supply table
   lookup:
-    ur_aarl200:
+    ur_RAPID200:
     - 0.34832313656806946
     - -0.5673663181117554
     - 1.519590202962057
     - -0.8787341874888916
     - 0.34816962480545044
     - -0.0683067480670374
-    vention_rail_aarl200: 176
+    vention_rail_RAPID200: 176
   resource_definition:
     resource_name: supply_slot_1
     resource_name_prefix: null
@@ -65,19 +66,19 @@ locations:
     default_child_template: null
     default_child_quantity: null
     resource_type: ''
-  resource_id: 01JSQ0NS3F1PW8FBXC1ZZXHF22
+  
 - location_name: supply_slot_2
   location_id: 01JSPPYZTTNV0BVY7V2CM4ZS4D
   description: Supply slot 2 on the supply table
   lookup:
-    ur_aarl200:
+    ur_RAPID200:
     - 0.3493771553039551
     - -0.5629457992366333
     - 1.5397680441485804
     - -0.9597859543612977
     - 0.3519563376903534
     - -0.03369170824159795
-    vention_rail_aarl200: 211
+    vention_rail_RAPID200: 211
   resource_definition:
     resource_name: supply_slot_2
     resource_name_prefix: null
@@ -91,19 +92,19 @@ locations:
     default_child_template: null
     default_child_quantity: null
     resource_type: ''
-  resource_id: 01JSQ0NS46HNG1DAC9K3XSQJS3
+  
 - location_name: supply_slot_3
   location_id: 01JSPPYZTT8QJ1K172B6MPNT03
   description: Supply slot 3 on the supply table
   lookup:
-    ur_aarl200:
+    ur_RAPID200:
     - 0.3402661979198456
     - -0.5712093871882935
     - 1.521087948475973
     - -0.8447808188251038
     - 0.35256826877593994
     - -0.10891420045961553
-    vention_rail_aarl200: 247
+    vention_rail_RAPID200: 247
   resource_definition:
     resource_name: supply_slot_3
     resource_name_prefix: null
@@ -117,19 +118,19 @@ locations:
     default_child_template: null
     default_child_quantity: null
     resource_type: ''
-  resource_id: 01JSQ0NS4BEVD58D8FPTQ7K65B
+  
 - location_name: supply_slot_4
   location_id: 01JSZ5RDZRKAKWH77N3XNW46KZ
   description: Supply slot 4 on the supply table
   lookup:
-    ur_aarl200:
+    ur_RAPID200:
     - 0.8536999821662903
     - -0.4737566274455567
     - 0.9607351461993616
     - -0.45314212263140874
     - 0.8410671353340149
     - -0.026507202778951466
-    vention_rail_aarl200: 150
+    vention_rail_RAPID200: 150
   resource_definition:
     resource_name: supply_slot_4
     resource_name_prefix: null
@@ -143,19 +144,19 @@ locations:
     default_child_template: null
     default_child_quantity: null
     resource_type: ''
-  resource_id: 01JSZ5RE5TYHTJWTS3R57CATBE
+  
 - location_name: supply_slot_5
   location_id: 01JSZ5RDZRS8CAJTB9398XV8K2
   description: Supply slot 5 on the supply table
   lookup:
-    ur_aarl200:
+    ur_RAPID200:
     - 1.072803020477295
     - -0.6423653525165101
     - 1.2969368139850062
     - -0.6086169642261048
     - 1.0778557062149048
     - -0.04507905641664678
-    vention_rail_aarl200: 150
+    vention_rail_RAPID200: 150
   resource_definition:
     resource_name: supply_slot_5
     resource_name_prefix: null
@@ -169,40 +170,40 @@ locations:
     default_child_template: null
     default_child_quantity: null
     resource_type: ''
-  resource_id: 01JSZ5RE651DXF06KQBMV63Y68
+  
 - location_name: trash
   location_id: 01JSQ0NRXWZJQK47E7MPSZK10K
   description: Trash can for tube racks
   lookup:
-    vention_rail_aarl200: 900
+    vention_rail_RAPID200: 900
   resource_definition: null
-  resource_id: null
+  
 - location_name: big_kahuna_safe
   location_id: 01JTKDBFVNTE307PVXGA41D7M8
   description: safe position for entering the big kahuna
   lookup:
-    ur_aarl200:
+    ur_RAPID200:
     - -0.22064382234682256
     - -1.0762758415988465
     - 1.372009579335348
     - -0.31504137933764653
     - 1.2652543783187866
     - 0.015393083915114403
-    vention_rail_aarl200: 50
+    vention_rail_RAPID200: 50
   resource_definition: null
-  resource_id: null
+  
 - location_name: big_kahuna_tube_rack
   location_id: 01JTKD0GJ76D0VKZGD2451254B
   description: tube rack slot for the big kahuna
   lookup:
-    ur_aarl200:
+    ur_RAPID200:
     - -0.2765467802630823
     - -0.3107280296138306
     - 0.9703653494464319
     - -0.7046964925578614
     - 1.288142204284668
     - -0.0033677260028284195
-    vention_rail_aarl200: 50
+    vention_rail_RAPID200: 50
   resource_definition:
     resource_name: big_kahuna_tube_rack
     resource_name_prefix: null
@@ -216,12 +217,12 @@ locations:
     default_child_template: null
     default_child_quantity: null
     resource_type: ''
-  resource_id: 01JTKD0GRJE6TY1K9M1JCG3N4N
+  
 - location_name: arm_safe_up
   location_id: 01JSQ9S58CNMX3WBANBQQ8Q19J
   description: A neutral pose for the UR arm puts it above the rail
   lookup:
-    ur_aarl200:
+    ur_RAPID200:
     - 0.00044058868661522865
     - -2.810916086236471
     - 1.744305435811178
@@ -229,27 +230,27 @@ locations:
     - 1.5159751176834106
     - -0.011863533650533498
   resource_definition: null
-  resource_id: null
+  
 - location_name: big_kahuna_door_closed_outside
   location_id: 01JTV2XGXM5R4QSP31GVG8X4N2
   description: The position to on the outside of the door handle when the door is
     closed
   lookup:
-    ur_aarl200:
-    - -0.6715958754168909
-    - -1.4014528554729004
-    - 1.8772838751422327
-    - -0.4154734176448365
-    - 0.960950493812561
-    - -0.011416260396138966
+    ur_RAPID200:
+    - -0.6715601126300257
+    - -1.3809889119914551
+    - 1.868932072316305
+    - -0.4371555608562012
+    - 0.9520414471626282
+    - -0.011605564747945607
   resource_definition: null
-  resource_id: null
+  
 - location_name: big_kahuna_door_closed_outside_approach
   location_id: 01JWERBDXDF3GQJVJ1CP78ZHQ8
   description: The position to approach on the outside of the door handle when the
     door is closed
   lookup:
-    ur_aarl200:
+    ur_RAPID200:
     - -0.8910821119891565
     - -1.5425753363272925
     - 2.0557854811297815
@@ -257,12 +258,12 @@ locations:
     - 0.6721163988113403
     - -0.049326721821920216
   resource_definition: null
-  resource_id: null
+  
 - location_name: big_kahuna_door_open_inside
   location_id: 01JTV2XGXMD9MK8JPKHJ6Y8WFV
   description: The position to on the inside of the door handle when the door is open
   lookup:
-    ur_aarl200:
+    ur_RAPID200:
     - 0.27523282170295715
     - -1.301760421400406
     - 1.751223389302389
@@ -270,13 +271,13 @@ locations:
     - 1.9060344696044922
     - 0.042821407318115234
   resource_definition: null
-  resource_id: null
+  
 - location_name: big_kahuna_door_open_outside
   location_id: 01JTV2XGXMFNJPYCKGAQMTFE6Y
   description: The position to on the outside of the door handle when the door is
     open
   lookup:
-    ur_aarl200:
+    ur_RAPID200:
     - 0.3928678035736084
     - -1.2376621526530762
     - 1.6528456846820276
@@ -284,13 +285,13 @@ locations:
     - 2.075568437576294
     - 0.04125046730041504
   resource_definition: null
-  resource_id: null
+  
 - location_name: big_kahuna_door_open_outside_approach
   location_id: 01JWES27PSX9WX1A7W4ZZ8DR76
   description: The position to approach on the outside of the door handle when the
     door is open
   lookup:
-    ur_aarl200:
+    ur_RAPID200:
     - 0.3370414078235626
     - -1.3554809105447312
     - 1.8025673071490687
@@ -298,12 +299,12 @@ locations:
     - 1.8625569343566895
     - 0.011861881241202354
   resource_definition: null
-  resource_id: null
+  
 - location_name: big_kahuna_door_closed_inside
   location_id: 01JTV2XGXMC5032FFJE8752PD4
   description: The position to on the inside of the door handle when the door is closed
   lookup:
-    ur_aarl200:
+    ur_RAPID200:
     - -0.5409544149981897
     - -1.4619277280620118
     - 1.9357288519488733
@@ -311,12 +312,12 @@ locations:
     - 1.144716501235962
     - -0.028331581746236623
   resource_definition: null
-  resource_id: null
+  
 - location_name: supply_station_safe
   location_id: 01JSQAQCH0MAQBQPWYPFKTSCJP
   description: A neutral pose for the UR arm above the supply station
   lookup:
-    ur_aarl200:
+    ur_RAPID200:
     - 0.019657766446471214
     - -1.8048960171141566
     - 2.3868096510516565
@@ -324,33 +325,33 @@ locations:
     - 0.031074078753590584
     - -0.06278688112367803
   resource_definition: null
-  resource_id: null
+  
 - location_name: icp_safe
   location_id: 01JTKHK6F4PBV9ND48841XN1X8
   description: A neutral pose for the UR arm above the supply station
   lookup:
-    ur_aarl200:
+    ur_RAPID200:
     - 3.1383187770843506
     - -1.2137835186770936
     - 1.9995372931109827
     - -1.0713617962649842
     - 0.01918788254261017
     - 0.23445263504981995
-    vention_rail_aarl200: 149
+    vention_rail_RAPID200: 149
   resource_definition: null
-  resource_id: null
+  
 - location_name: icp_tube_rack
   location_id: 01JTKJCA2ZGRG417G7A6ZSS3E5
   description: tube rack slot for the icp
   lookup:
-    ur_aarl200:
+    ur_RAPID200:
     - 3.283334732055664
     - -0.8445585531047364
     - 1.9344666639911097
     - -1.3013802927783509
     - 0.13209328055381775
     - 0.18554715812206268
-    vention_rail_aarl200: 149
+    vention_rail_RAPID200: 149
   resource_definition:
     resource_name: icp_tube_rack
     resource_name_prefix: null
@@ -364,19 +365,19 @@ locations:
     default_child_template: null
     default_child_quantity: null
     resource_type: ''
-  resource_id: 01JTKJCA99H4H2Q92YZH6NBVBF
+  
 - location_name: nmr_slot_1
   location_id: 01JXE569NSEGESFSN9MS7B9XKG
   description: tube rack slot for the icp
   lookup:
-    ur_aarl200:
+    ur_RAPID200:
     - 1.1596189737319946
     - -0.7475418013385315
     - 1.3638470808612269
     - -0.5678845208934327
     - 1.1658238172531128
     - -0.014802281056539357
-    vention_rail_aarl200: 211
+    vention_rail_RAPID200: 211
   resource_definition:
     resource_name: nmr_slot_1
     resource_name_prefix: null
@@ -390,5 +391,5 @@ locations:
     default_child_template: null
     default_child_quantity: null
     resource_type: ''
-  resource_id: 01JXE569VHSFA4MW42TS7MGWAJ
-workcell_directory: /home/madsci/.madsci/workcells/AARL200 Workcell
+  
+workcell_directory: /home/madsci/.madsci/workcells/RAPID200 Workcell

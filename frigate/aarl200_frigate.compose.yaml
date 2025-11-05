@@ -1,6 +1,6 @@
 services:
-  aarl200_frigate:
-    container_name: aarl200_frigate
+  RAPID200_frigate:
+    container_name: RAPID200_frigate
     restart: unless-stopped
     image: ghcr.io/blakeblackshear/frigate:stable
     # deploy:    # <------------- Add this section

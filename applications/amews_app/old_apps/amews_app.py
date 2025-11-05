@@ -21,8 +21,8 @@ class AMEWSApp(ExperimentApplication):
     url = "http://controlroom1.cse.anl.gov:8002/"
     workflow_directory = Path("../workflows").resolve()
     experiment_design = ExperimentDesign(experiment_name="AMEWS Cell Tests")
-    network_output_path = Path("/run/user/1000/gvfs/smb-share:server=sheldon.cse.anl.gov,share=aarl200/RESULTS/AMEWS_Output").resolve()
-    network_input_path = Path("/run/user/1000/gvfs/smb-share:server=sheldon.cse.anl.gov,share=aarl200/INPUTS").resolve()
+    network_output_path = Path("/run/user/1000/gvfs/smb-share:server=sheldon.cse.anl.gov,share=RAPID200/RESULTS/AMEWS_Output").resolve()
+    network_input_path = Path("/run/user/1000/gvfs/smb-share:server=sheldon.cse.anl.gov,share=RAPID200/INPUTS").resolve()
     output_path = Path("/home/aarl/Documents/AMEWS_output").resolve()
     #network_input_path = Path("home/aarl/Documents/AMEWS_input").resolve()
 

@@ -5,21 +5,26 @@ metadata:
   version: 0.2
 
 parameters:
-  - "name": library_id
-  - "name": chem_file
-  - "name": prompts_file
+  json_inputs:
+    - key: library_id
+  file_inputs:
+    - key: chem_file
+    - key: prompts_file
 steps:
   - name: Read Barcode
-    node: camera_aarl200
+    node: camera_RAPID200
+    key: barcode
     action: read_barcode
     args:
       autofocus: false
       focus: 100
   - name: LS Sample
-    node: bk_aarl200
+    node: bk_RAPID200
+    key: sample
     action: run_preloaded_library
-    args:
-      library_id: $library_id
+    parameters:
+      args:
+        library_id: library_id
     files:
-      chemfile: $chem_file
-      promptsfile: $prompts_file
+      chemfile: chem_file
+      promptsfile: prompts_file

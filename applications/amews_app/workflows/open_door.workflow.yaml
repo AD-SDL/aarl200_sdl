@@ -7,7 +7,7 @@ metadata:
 
 steps:
   - name: Home UR
-    node: ur_aarl200
+    node: ur_RAPID200
     action: movej
     args:
       acceleration: 0.35
@@ -15,10 +15,10 @@ steps:
     locations:
       joints: arm_safe_up
   - name: Home Rail
-    node: vention_rail_aarl200
+    node: vention_rail_RAPID200
     action: home
   - name: Back out Rail
-    node: vention_rail_aarl200
+    node: vention_rail_RAPID200
     action: move
     args:
       speed: 10
@@ -26,17 +26,17 @@ steps:
     locations:
       position: big_kahuna_rail
   - name: Set Params
-    node: ur_aarl200
+    node: ur_RAPID200
     action: set_movement_params
     args:
       gripper_force: 50
   - name: Close Gripper
-    node: ur_aarl200
+    node: ur_RAPID200
     action: toggle_gripper
     args:
       close: true
   - name: Move to approach position for door opening
-    node: ur_aarl200
+    node: ur_RAPID200
     action: movej
     args:
       acceleration: 0.35
@@ -44,15 +44,25 @@ steps:
     locations: 
       joints: big_kahuna_door_closed_outside_approach
   - name: Move to door opening position
-    node: ur_aarl200
+    node: ur_RAPID200
     action: movej
     args:
       acceleration: 0.35
       velocity: 0.35
     locations: 
       joints: big_kahuna_door_closed_outside
+  - name: toggle_gripper
+    node: ur_RAPID200
+    action: toggle_gripper
+    args:
+      open: true
+  - name: toggle_gripper
+    node: ur_RAPID200
+    action: toggle_gripper
+    args:
+      close: true
   - name: Open Door
-    node: ur_aarl200
+    node: ur_RAPID200
     action: movel
     args: 
       velocity: 0.05
@@ -60,7 +70,7 @@ steps:
     locations:
        target: big_kahuna_door_open_inside
   - name: Home UR
-    node: ur_aarl200
+    node: ur_RAPID200
     action: movej
     args:
       acceleration: 0.35
@@ -68,12 +78,12 @@ steps:
     locations:
       joints: arm_safe_up
   - name: toggle_gripper
-    node: ur_aarl200
+    node: ur_RAPID200
     action: toggle_gripper
     args:
       open: true
   - name: Set Params
-    node: ur_aarl200
+    node: ur_RAPID200
     action: set_movement_params
     args:
       gripper_force: 200

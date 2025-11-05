@@ -6,7 +6,7 @@ metadata:
 
 steps:
   - name: Run Pump
-    node: RS232pump_aarl200
+    node: RS232pump_RAPID200
     action: purge
     args:
       rate: 7.5

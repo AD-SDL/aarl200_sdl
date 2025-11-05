@@ -11,7 +11,7 @@ def main() -> None:
     """Runs an example WEI workflow"""
     # This defines the Experiment object that will communicate with the WEI server
     experiment = ExperimentDesign(
-        experiment_name="AARL200_Demo",
+        experiment_name="RAPID200_Demo",
         experiment_description="Pick and place example"
     )
     exp = ExperimentClient(
@@ -20,9 +20,9 @@ def main() -> None:
         experiment=experiment
     )
 
-    pickup_ur_locations = ["ur_aarl200.supply_rack_icp1", "ur_aarl200.supply_rack_icp2", "ur_aarl200.supply_rack_icp3"]
+    pickup_ur_locations = ["ur_RAPID200.supply_rack_icp1", "ur_RAPID200.supply_rack_icp2", "ur_RAPID200.supply_rack_icp3"]
     pickup_rail_locations = [175, 211, 247]
-    trash_ur_locations = ["ur_aarl200.trash_rack_icp1", "ur_aarl200.trash_rack_icp2", "ur_aarl200.trash_rack_icp3"]
+    trash_ur_locations = ["ur_RAPID200.trash_rack_icp1", "ur_RAPID200.trash_rack_icp2", "ur_RAPID200.trash_rack_icp3"]
     trash_rail_locations = [282, 318, 353]
     wf_dir = (Path(__file__).parent.parent / "workflows").resolve()
 
@@ -35,59 +35,59 @@ def main() -> None:
             wf_run = exp.start_run(
                 workflow=wf_dir / "pick_tube_rack.workflow.yaml",
                 payload={
-                    "travel_safe_joints": "ur_aarl200.travel_container_joints",
+                    "travel_safe_joints": "ur_RAPID200.travel_container_joints",
                      "rail_position": pickup_rail_locations[i],
                      "arm_position": pickup_ur_locations[i],
-                     "arm_safe_joints": "ur_aarl200.supply_station_safe_joints"
+                     "arm_safe_joints": "ur_RAPID200.supply_station_safe_joints"
                 }
             )
         # 
             wf_run = exp.start_run(
                 workflow=wf_dir / "place_tube_rack.workflow.yaml",
                 payload={
-                    "travel_safe_joints": "ur_aarl200.travel_container_joints",
+                    "travel_safe_joints": "ur_RAPID200.travel_container_joints",
                     "rail_position": 650,
-                    "arm_position": "ur_aarl200.pal_robot_1",
-                    "arm_safe_joints": "ur_aarl200.pal_safe_joints",
+                    "arm_position": "ur_RAPID200.pal_robot_1",
+                    "arm_safe_joints": "ur_RAPID200.pal_safe_joints",
                 }
             )
             wf_run = exp.start_run(
                 workflow=wf_dir / "pick_tube_rack.workflow.yaml",
                 payload={
-                    "travel_safe_joints": "ur_aarl200.travel_container_joints",
+                    "travel_safe_joints": "ur_RAPID200.travel_container_joints",
                     "rail_position": 650,
-                    "arm_position": "ur_aarl200.pal_robot_1",
-                    "arm_safe_joints": "ur_aarl200.pal_safe_joints",
+                    "arm_position": "ur_RAPID200.pal_robot_1",
+                    "arm_safe_joints": "ur_RAPID200.pal_safe_joints",
                 }
             )
 
             wf_run = exp.start_run(
                 workflow=wf_dir / "place_tube_rack.workflow.yaml",
                 payload={
-                    "travel_safe_joints": "ur_aarl200.travel_container_joints",
+                    "travel_safe_joints": "ur_RAPID200.travel_container_joints",
                     "rail_position": 150,
-                    "arm_position": "ur_aarl200.icp",
-                    "arm_safe_joints": "ur_aarl200.icp_safe_joints"
+                    "arm_position": "ur_RAPID200.icp",
+                    "arm_safe_joints": "ur_RAPID200.icp_safe_joints"
                 }
             )
 
             wf_run = exp.start_run(
                 workflow=wf_dir / "pick_tube_rack.workflow.yaml",
                 payload={
-                    "travel_safe_joints": "ur_aarl200.travel_container_joints",
+                    "travel_safe_joints": "ur_RAPID200.travel_container_joints",
                     "rail_position": 150,
-                    "arm_position": "ur_aarl200.icp",
-                    "arm_safe_joints": "ur_aarl200.icp_safe_joints"
+                    "arm_position": "ur_RAPID200.icp",
+                    "arm_safe_joints": "ur_RAPID200.icp_safe_joints"
                 }
             )
 
             wf_run = exp.start_run(
                 workflow=wf_dir / "place_tube_rack.workflow.yaml",
                 payload={
-                    "travel_safe_joints": "ur_aarl200.travel_container_joints",
+                    "travel_safe_joints": "ur_RAPID200.travel_container_joints",
                     "rail_position": trash_rail_locations[i],
                     "arm_position": trash_ur_locations[i],
-                    "arm_safe_joints": "ur_aarl200.supply_station_safe_joints"
+                    "arm_safe_joints": "ur_RAPID200.supply_station_safe_joints"
                 }
             )
         break

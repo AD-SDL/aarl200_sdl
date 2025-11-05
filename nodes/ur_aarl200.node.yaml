@@ -1,7 +1,7 @@
-node_name: ur_aarl200
+node_name: ur_RAPID200
 node_id: 01JSMR1XF90DVRJSJNG1GS2MVA
 node_url: null
-node_description: The main ur arm for the aarl200 workcell
+node_description: The main ur arm for the RAPID200 workcell
 node_type: device
 module_name: ur_module
 module_version: 0.0.1

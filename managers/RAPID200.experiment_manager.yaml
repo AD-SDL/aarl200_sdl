@@ -1,5 +1,6 @@
-name: AARL200 Experiment Manager
-description: An experiment manager for AARL200
+name: RAPID200 Experiment Manager
+description: An experiment manager for RAPID200
+manager_id: 01K8ZFQ0XAM266A2FN60SF2XQC
 manager_type: experiment_manager
 url: http://controlroom1.cse.anl.gov:8002
 host: controlroom1.cse.anl.gov
@@ -8,3 +9,4 @@ db_url: mongodb://localhost:27017
 event_client_config:
   event_server_url: http://controlroom1.cse.anl.gov:8001
 lab_manager_url: http://controlroom1.cse.anl.gov:8000
+experiment_manager_id: 01K8ZFQ0XAM266A2FN60SF2XQC
