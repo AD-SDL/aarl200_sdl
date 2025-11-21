@@ -24,7 +24,6 @@ import pandas as pd
 class AMEWSApp(ExperimentApplication):
     """A demonstration and benchmarking experimental application: mixing colors autonomously."""
     url = "http://controlroom1.cse.anl.gov:8002/"
-    data_server_url="http://controlroom1.cse.anl.gov:8003/"
     workflow_directory = Path("../workflows").resolve()
     experiment_design = ExperimentDesign(experiment_name="AMEWS Cell Tests")
     network_output_path = Path("/run/user/1000/gvfs/smb-share:server=sheldon.cse.anl.gov,share=RAPID200/RESULTS/").resolve()
@@ -69,7 +68,7 @@ if __name__ == "__main__":
         input_locations = ["supply_slot_1", "supply_slot_2", "supply_slot_3", "supply_slot_4", "supply_slot_5"]
         setup_json = {}
         setup_files = {}
-        experiment_label = "Z:/RESULTS\\BK_AMEWS_24cell_20251111_202543" 
+        experiment_label = "Z:/RESULTS\\BK_AMEWS_test_20251111_171621" 
         experiment_folder = experiment_label.replace("Z:/RESULTS\\", "")
         experiment_app.network_output_path = experiment_app.network_output_path / experiment_folder
         experiment_app.output_path = experiment_app.output_path / experiment_folder
@@ -80,8 +79,9 @@ if __name__ == "__main__":
             print(f"Unable to create network output path: {e}")
         experiment_app.output_path.mkdir(parents=True, exist_ok=True)
         datapoints = experiment_app.data_client.query_datapoints({"label": experiment_label})
-        sequence_logs = [datapoint.value for datapoint in datapoints.values() if datapoint.data_type == "json" and "AS_sequence_log" in datapoint.value]
+        sequence_logs = [datapoint.value for datapoint in datapoints.values() if datapoint.data_type == "data_value" and "AS_sequence_log" in datapoint.value]
         sequence_log  = sequence_logs[0]
+        
         for log in sequence_logs:
             if len(log["AS_sequence_log"]) >= len(sequence_log["AS_sequence_log"]):
                 sequence_log = log
@@ -133,7 +133,7 @@ if __name__ == "__main__":
         bk_workflow = None
         bk_step_counter = 0
        
-        while len(measured_racks) < num_tube_racks:
+        while len(sampled_racks) < num_tube_racks:
             bk_workflow = experiment_app.workcell_client.query_workflow(bk_workflow.workflow_id) if bk_workflow else None
             icp_workflow = experiment_app.workcell_client.query_workflow(icp_workflow.workflow_id) if icp_workflow else None
             
@@ -236,53 +236,53 @@ if __name__ == "__main__":
                     )
                 
                 
-            if icp_workflow is None and len(sampled_racks) > len(measured_racks):
-                    labjack_state = labjack_client.get_state()
-                    if labjack_state["volumes"]["AIN0"] > 0.95*113.56:
-                        print("Not enough space in barrel, will not run icp yet")
-                    else:
+            # if icp_workflow is None and len(sampled_racks) > len(measured_racks):
+            #         labjack_state = labjack_client.get_state()
+            #         if labjack_state["volumes"]["AIN0"] > 0.95*113.56:
+            #             print("Not enough space in barrel, will not run icp yet")
+            #         else:
                         
-                        autosampler, items, code, last_dataset = unpack_self_container(sampled_racks[len(measured_racks)])
-                        sample_info_file_path = write_sampleinfo(
-                                            autosampler = autosampler,
-                                            batch=code,
-                                            items=items,
-                                            description="Sample information file for Mina HTS 3",
-                                            calibrate=True,
-                                            rinse=True,
-                                            method="Mina_hts_v03",
-                                        )
+            #             autosampler, items, code, last_dataset = unpack_self_container(sampled_racks[len(measured_racks)])
+            #             sample_info_file_path = write_sampleinfo(
+            #                                 autosampler = autosampler,
+            #                                 batch=code,
+            #                                 items=items,
+            #                                 description="Sample information file for Mina HTS 3",
+            #                                 calibrate=True,
+            #                                 rinse=True,
+            #                                 method="Mina_hts_v03",
+            #                             )
 
-                        experiment_app.workcell_client.start_workflow(
-                            experiment_app.workflow_directory / "transfer_to_icp.workflow.yaml", json_inputs={"source_location": input_locations[len(measured_racks)]}
-                        )
-                        pump_workflow = experiment_app.workcell_client.start_workflow(
-                            experiment_app.workflow_directory / "icp_pump.workflow.yaml", await_completion=False
-                        )
-                        icp_workflow = experiment_app.workcell_client.start_workflow(
-                        experiment_app.workflow_directory / "run_icp.workflow.yaml", json_inputs={"dataset_name": last_dataset}, file_inputs= { "sample_info_file": str(sample_info_file_path)}, await_completion=False)
+            #             experiment_app.workcell_client.start_workflow(
+            #                 experiment_app.workflow_directory / "transfer_to_icp.workflow.yaml", json_inputs={"source_location": input_locations[len(measured_racks)]}
+            #             )
+            #             pump_workflow = experiment_app.workcell_client.start_workflow(
+            #                 experiment_app.workflow_directory / "icp_pump.workflow.yaml", await_completion=False
+            #             )
+            #             icp_workflow = experiment_app.workcell_client.start_workflow(
+            #             experiment_app.workflow_directory / "run_icp.workflow.yaml", json_inputs={"dataset_name": last_dataset}, file_inputs= { "sample_info_file": str(sample_info_file_path)}, await_completion=False)
 
                     
-            if icp_workflow and icp_workflow.status.completed:
-                    pump_workflow = experiment_app.workcell_client.start_workflow(
-                            experiment_app.workflow_directory / "icp_pump.workflow.yaml", await_completion=False
-                        )
-                    experiment_app.workcell_client.start_workflow(
-                            experiment_app.workflow_directory / "transfer_from_icp.workflow.yaml", json_inputs={"target_location": input_locations[len(measured_racks)]}
-                        )
-                    measured_racks.append(sampled_racks[len(measured_racks)])
-                    experiment_app.data_client.save_datapoint_value(
-                            icp_workflow.get_datapoint_id(step_key="icp_analysis"), experiment_app.output_path / ("run_"+code+".csv"))
-                    try:
-                        #convert_report(str(experiment_app.output_path / ("run_"+code+".csv")))
-                        experiment_app.data_client.save_datapoint_value(
-                            icp_workflow.get_datapoint_id(step_key="icp_analysis"), experiment_app.network_output_path / ("run_"+code+".csv"))
-                        #convert_report(str(experiment_app.network_output_path / ("run_"+code+".csv")))
-                        #run_analysis(experiment_app.network_output_path, len(sampled_racks),  num_cells)
+            # if icp_workflow and icp_workflow.status.completed:
+            #         pump_workflow = experiment_app.workcell_client.start_workflow(
+            #                 experiment_app.workflow_directory / "icp_pump.workflow.yaml", await_completion=False
+            #             )
+            #         experiment_app.workcell_client.start_workflow(
+            #                 experiment_app.workflow_directory / "transfer_from_icp.workflow.yaml", json_inputs={"target_location": input_locations[len(measured_racks)]}
+            #             )
+            #         measured_racks.append(sampled_racks[len(measured_racks)])
+            #         experiment_app.data_client.save_datapoint_value(
+            #                 icp_workflow.get_datapoint_id(step_key="icp_analysis"), experiment_app.output_path / ("run_"+code+".csv"))
+            #         try:
+            #             #convert_report(str(experiment_app.output_path / ("run_"+code+".csv")))
+            #             experiment_app.data_client.save_datapoint_value(
+            #                 icp_workflow.get_datapoint_id(step_key="icp_analysis"), experiment_app.network_output_path / ("run_"+code+".csv"))
+            #             #convert_report(str(experiment_app.network_output_path / ("run_"+code+".csv")))
+            #             #run_analysis(experiment_app.network_output_path, len(sampled_racks),  num_cells)
                     
-                    except Exception as e:
-                        print(e)
-                        print("unable to write results to network")
-                    icp_workflow = None
+            #         except Exception as e:
+            #             print(e)
+            #             print("unable to write results to network")
+            #         icp_workflow = None
             time.sleep(1)
                     

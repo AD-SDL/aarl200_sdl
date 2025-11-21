@@ -28,9 +28,11 @@ steps:
   - name: Pick up tube rack
     node: ur_RAPID200
     action: gripper_pick
+    args:
+      joint_angle_locations: false
     locations: 
       home: big_kahuna_safe
-      source: big_kahuna_tube_rack
+      source: big_kahuna_tube_rack_linear
   - name: Move to Safe
     node: ur_RAPID200
     action: movej
@@ -50,6 +52,7 @@ steps:
     action: gripper_place
     args:
       target_approach_distance: 0.12
+      joint_angle_locations: false
     locations:
       home: supply_station_safe
     parameters:

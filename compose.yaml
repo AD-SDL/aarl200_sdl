@@ -154,7 +154,13 @@ services:
     environment:
       - NODE_DEFINITION=nodes/ur_RAPID200.node.yaml
       - NODE_URL=http://controlroom1.cse.anl.gov:3011
-    command: python -m ur_rest_node
+      - USER_ID=${USER_ID:-1000}
+      - GROUP_ID=${GROUP_ID:-1000}
+    command: python -m ur_rest_node --ur_ip=146.139.45.23 --use_resources=false
+    volumes:
+      - ${REPO_PATH:-.}/nodes:/home/madsci/nodes
+    depends_on:
+      - resource_manager
   vention_rail_module:
     image: ghcr.io/ad-sdl/vention_rail_module:latest
     container_name: vention_rail_RAPID200
@@ -162,4 +168,8 @@ services:
     environment:
       - NODE_DEFINITION=nodes/vention_rail_RAPID200.node.yaml
       - NODE_URL=http://controlroom1.cse.anl.gov:3022
+      - USER_ID=${USER_ID:-1000}
+      - GROUP_ID=${GROUP_ID:-1000}
+    volumes:
+      - ${REPO_PATH:-.}/nodes:/home/madsci/nodes
     command: python -m rail_rest_node

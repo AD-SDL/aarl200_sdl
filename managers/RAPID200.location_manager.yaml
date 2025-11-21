@@ -266,12 +266,12 @@ locations:
   description: tube rack slot for the icp
   representations:
     ur_RAPID200:
-    - 3.283334732055664
-    - -0.8445585531047364
-    - 1.9344666639911097
-    - -1.3013802927783509
-    - 0.13209328055381775
-    - 0.18554715812206268
+    - 3.2927701473236084
+    - -0.8395634454539795
+    - 1.8877413908587855
+    - -1.1642645460418244
+    - 0.14383070170879364
+    - 0.12462911754846573
     vention_rail_RAPID200: 149
   resource_template_name: rack_nest
   resource_template_overrides:

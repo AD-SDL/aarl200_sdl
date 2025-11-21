@@ -1,0 +1,21 @@
+name: Test UR
+
+metadata:
+  author: Tobias Ginsburg, Kyle Hippe, Ryan D. Lewis
+  info: Workflow to open big kahuna door
+  version: 0.2
+  
+steps:
+  - name: Pick up tube rack
+    node: ur_RAPID200
+    action: gripper_pick
+    locations: 
+      home: supply_station_safe
+      source: supply_slot_1
+  - name: Place down tube rack
+    node: ur_RAPID200
+    action: gripper_place
+    locations: 
+      home: supply_station_safe
+      target: supply_slot_1
+  

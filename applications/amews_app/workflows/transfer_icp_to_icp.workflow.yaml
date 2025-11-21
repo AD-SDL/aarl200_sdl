@@ -1,13 +1,13 @@
-name: Transfer_into_bk
+name: Transfer_out_of_icp
 
 metadata:
   author: Tobias Ginsburg, Kyle Hippe, Ryan D. Lewis
-  info: Workflow to open big kahuna door
+  info: Workflow to transfer from icp
   version: 0.2
   
 parameters:
   json_inputs:
-    - key: source_location
+    - key: target_location
 steps:
   - name: Home UR
     node: ur_RAPID200
@@ -23,41 +23,56 @@ steps:
     args:
       speed: 30
       acceleration: 30
-    parameters:
-      locations:
-        position: source_location
+    locations:
+      position: icp_safe
   - name: Pick up tube rack
     node: ur_RAPID200
     action: gripper_pick
     args:
       joint_angle_locations: false
     locations: 
-      home: supply_station_safe
-    parameters:
-      locations:
-        source: source_location
+      home: icp_safe
+      source: icp_tube_rack_linear
   - name: Move to Safe
     node: ur_RAPID200
     action: movej
     locations:
        joints: arm_safe_up
-  - name: Move rail
-    node: vention_rail_RAPID200
-    action: move
+  # - name: Move rail
+  #   node: vention_rail_RAPID200
+  #   action: move
+  #   args:
+  #     speed: 30
+  #     acceleration: 30
+  #   parameters:
+  #     locations:
+  #       position: target_location
+  # - name: Place In Supply Slot
+  #   node: ur_RAPID200
+  #   action: gripper_place
+  #   args:
+  #     target_approach_distance: 0.12
+  #   locations:
+  #     home: supply_station_safe
+  #   parameters:
+  #     locations:
+  #       target: target_location
+  - name: Home UR
+    node: ur_RAPID200
+    action: movej
     args:
-      speed: 30
-      acceleration: 30
+      acceleration: 0.35
+      velocity: 0.35
     locations:
-      position: big_kahuna_rail
-  - name: Place In Big Kahuna
+      joints: arm_safe_up
+  - name: Place In ICP
     node: ur_RAPID200
     action: gripper_place
     args:
-      target_approach_distance: 0.1
       joint_angle_locations: false
     locations:
-      home: big_kahuna_safe
-      target: big_kahuna_tube_rack_linear
+      home: icp_safe
+      target: icp_tube_rack_linear
   - name: Home UR
     node: ur_RAPID200
     action: movej

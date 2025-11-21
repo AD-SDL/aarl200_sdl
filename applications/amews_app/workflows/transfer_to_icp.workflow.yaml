@@ -29,6 +29,8 @@ steps:
   - name: Pick up tube rack
     node: ur_RAPID200
     action: gripper_pick
+    args:
+      joint_angle_locations: false
     locations: 
       home: supply_station_safe
     parameters:
@@ -50,9 +52,11 @@ steps:
   - name: Place In ICP
     node: ur_RAPID200
     action: gripper_place
+    args:
+      joint_angle_locations: false
     locations:
       home: icp_safe
-      target: icp_tube_rack
+      target: icp_tube_rack_linear
   - name: Home UR
     node: ur_RAPID200
     action: movej
